@@ -198,7 +198,7 @@ function cardDialog(): string {
 function licenseMarkup(): string {
   if (licensed) return `<p class="license-active"><span aria-hidden="true">✓</span> Notebook edition active</p><p class="muted">Unlimited cards and complete history are unlocked on this device.</p>`;
   return `<a class="buy-button" href="${checkoutUrl}">Buy Notebook edition · $9</a>
-    <details><summary>Have a license? Restore it</summary><form id="license-form"><label for="license-token">License token<input id="license-token" type="text" autocomplete="off" spellcheck="false" /></label><button type="submit">Verify license</button></form></details>
+    <details><summary>Have a license? Restore it</summary><form id="license-form"><label for="license-token">License token<input id="license-token" type="text" autocomplete="off" spellcheck="false" /></label><button type="submit" aria-label="Verify license">Verify license</button></form></details>
     <p class="license-notice" id="license-notice" role="status">${escapeHtml(licenseNotice)}</p>`;
 }
 
@@ -267,6 +267,7 @@ function bindHomeEvents(): void {
   document.querySelector('#card-form')?.addEventListener('submit', handleCardSubmit);
   document.querySelector('#close-dialog')?.addEventListener('click', closeCardDialog);
   document.querySelector('#cancel-dialog')?.addEventListener('click', closeCardDialog);
+  document.querySelector('#card-dialog')?.addEventListener('close', () => returningFocus?.focus());
   document.querySelector('#export-json')?.addEventListener('click', exportJson);
   document.querySelector('#export-csv')?.addEventListener('click', exportCsv);
   document.querySelector('#import-file')?.addEventListener('change', importJson);

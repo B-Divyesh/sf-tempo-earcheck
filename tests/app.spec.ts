@@ -11,6 +11,11 @@ test('home is semantic, error-free, and accessible', async ({ page }) => {
   await expect(page.getByRole('heading', { name: /Hear the tempo/ })).toBeVisible();
   const accessibility = await new AxeBuilder({ page }).analyze();
   expect(accessibility.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? ''))).toEqual([]);
+  const click = page.locator('#start-button');
+  await click.click();
+  await expect(click).toHaveAttribute('aria-pressed', 'true');
+  await click.click();
+  await expect(click).toHaveAttribute('aria-pressed', 'false');
   expect(errors).toEqual([]);
 });
 
@@ -49,6 +54,18 @@ test('installed shell reopens offline', async ({ page, context }) => {
   await page.reload();
   await expect(page.getByRole('heading', { name: /Hear the tempo/ })).toBeVisible();
   await context.setOffline(false);
+});
+
+test('a returned purchase token is verified, stored, and removed from the URL', async ({ page }) => {
+  await page.route('https://api.sociobot.in/**', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ valid: true, reason: 'ok', expires_at: null })
+  }));
+  await page.goto('/?license=test-license');
+  await expect(page.locator('.license-active')).toContainText('Notebook edition active');
+  expect(await page.evaluate(() => localStorage.getItem('sb_license:tempo-earcheck'))).toBe('test-license');
+  expect(new URL(page.url()).searchParams.has('license')).toBe(false);
 });
 
 test('390px layout has no horizontal overflow', async ({ page }, testInfo) => {

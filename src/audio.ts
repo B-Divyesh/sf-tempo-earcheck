@@ -51,7 +51,9 @@ export class Metronome {
       oscillator.start(this.nextTime);
       oscillator.stop(this.nextTime + 0.04);
       const delay = Math.max(0, (this.nextTime - this.context.currentTime) * 1000);
-      window.setTimeout(() => this.onBeat(beat), delay);
+      window.setTimeout(() => {
+        if (this.timer !== null) this.onBeat(beat);
+      }, delay);
       this.nextTime += 60 / this.bpm;
       this.beat = (this.beat + 1) % this.meter;
     }

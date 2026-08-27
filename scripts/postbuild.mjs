@@ -8,6 +8,8 @@ const worker = await readFile(workerPath, 'utf8');
 const localAssets = [...index.matchAll(/(?:src|href)="(\/(?:assets\/[^"?]+|manifest\.webmanifest|icons\/[^"?]+))"/g)].map((match) => match[1]);
 const precache = [...new Set([
   '/',
+  '/privacy/',
+  '/terms/',
   '/offline.html',
   '/manifest.webmanifest',
   '/assets/tempo-desk-720.webp',
