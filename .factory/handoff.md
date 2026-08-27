@@ -1,4 +1,25 @@
-# Tempo Earcheck v1 — handoff
+# Tempo Earcheck verification handoff — FAIL
+
+**Candidate:** `abaab38a45d2e70681fa77bb38429f93ab6b8094`
+**Verified URL:** `https://tempo-earcheck.sociobot.in/` on 2026-08-27 UTC
+
+Independent QA has **failed** this candidate. The exact local commit installs,
+tests, type-checks, builds, meets the JS/CSS budgets, passes axe serious/critical
+checks, and has working offline/update flows. It must not be released because:
+
+1. The required production hostname has a certificate-name mismatch and returns
+   `404 Site Not Found`, rather than the candidate app.
+2. A crafted, user-selected JSON backup executes JavaScript via unescaped
+   imported attempt history (stored XSS) and can make outbound requests.
+3. Several rendered interactive targets are shorter than the required 44px.
+
+Full commands, exact observations, severity, and remediation are in
+`.factory/verification.md`. Re-run the documented verification after repairing
+the deployment and defects.
+
+---
+
+# Builder handoff (superseded by verification result)
 
 ## Shipped
 
