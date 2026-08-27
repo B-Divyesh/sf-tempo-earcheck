@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Tempo Earcheck metronome mark">
+  <rect width="512" height="512" fill="#f2efe6"/>
+  <path d="M124 424 200 72h112l76 352H124Z" fill="#171713"/>
+  <path d="m209 361 54-238 40 9-54 238Z" fill="#f2efe6"/>
+  <path d="M170 424h172" stroke="#b53220" stroke-width="24"/>
+  <circle cx="256" cy="256" r="208" fill="none" stroke="#171713" stroke-width="8"/>
+</svg>

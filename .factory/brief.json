@@ -1,0 +1,9 @@
+{
+  "slug": "tempo-earcheck",
+  "title": "Tempo Earcheck",
+  "artifact_class": "pwa-offline",
+  "user": "Instrumentalists choosing practice and ensemble tempos who need to hear, tap, and record a defensible target tempo before they encode it in a score or rehearsal plan.",
+  "smallest_useful_product": "Offline PWA with tap-tempo, accented-meter click, named tempo trials, and a compact practice card that records a starting BPM, passed BPM, and next step.",
+  "monetization": "one-time",
+  "constraints": "Web Audio works offline; hearing-safe defaults; no copyrighted scores or recordings."
+}
