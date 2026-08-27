@@ -1,0 +1,294 @@
+{
+  "communities": {
+    "0": [
+      "src_domain_temponame",
+      "src_main",
+      "src_main_beatcells",
+      "src_main_bindsharedevents",
+      "src_main_bpm",
+      "src_main_cachedlicenseisvalid",
+      "src_main_carddialog",
+      "src_main_cardmarkup",
+      "src_main_cards",
+      "src_main_escapehtml",
+      "src_main_footer",
+      "src_main_formatdate",
+      "src_main_homepage",
+      "src_main_legalpage",
+      "src_main_licensed",
+      "src_main_licensemarkup",
+      "src_main_loadcards",
+      "src_main_masthead",
+      "src_main_meter",
+      "src_main_meteroptions",
+      "src_main_metronome",
+      "src_main_processlicense",
+      "src_main_renderlicense",
+      "src_main_restorelicense",
+      "src_main_setmeter",
+      "src_main_taps",
+      "src_main_updatenetwork",
+      "src_main_updatetemponame",
+      "src_main_verifylicense",
+      "src_main_volume"
+    ],
+    "1": [
+      "ref_dom",
+      "ref_dom_iterable",
+      "ref_es2022",
+      "ref_src",
+      "ref_vite_client",
+      "ref_vite_config_ts",
+      "tsconfig",
+      "tsconfig_compileroptions",
+      "tsconfig_compileroptions_lib",
+      "tsconfig_compileroptions_module",
+      "tsconfig_compileroptions_moduleresolution",
+      "tsconfig_compileroptions_noemit",
+      "tsconfig_compileroptions_strict",
+      "tsconfig_compileroptions_target",
+      "tsconfig_compileroptions_types",
+      "tsconfig_compileroptions_usedefineforclassfields",
+      "tsconfig_include"
+    ],
+    "2": [
+      "src_main_announcecards",
+      "src_main_bindhomeevents",
+      "src_main_closecarddialog",
+      "src_main_download",
+      "src_main_exportjson",
+      "src_main_handlecardaction",
+      "src_main_handlecardsubmit",
+      "src_main_importjson",
+      "src_main_opencarddialog",
+      "src_main_registerserviceworker",
+      "src_main_rendercards",
+      "src_main_setvolume",
+      "src_main_showtoast",
+      "src_main_undodelete"
+    ],
+    "3": [
+      "axe_core_playwright",
+      "package_devdependencies",
+      "package_devdependencies_axe_core_playwright",
+      "package_devdependencies_playwright_test",
+      "package_devdependencies_types_node",
+      "package_devdependencies_typescript",
+      "package_devdependencies_vite",
+      "package_devdependencies_vitest",
+      "playwright_test",
+      "types_node",
+      "typescript",
+      "vite",
+      "vitest"
+    ],
+    "4": [
+      "package",
+      "package_name",
+      "package_private",
+      "package_scripts",
+      "package_scripts_build",
+      "package_scripts_dev",
+      "package_scripts_preview",
+      "package_scripts_test",
+      "package_scripts_test_e2e",
+      "package_scripts_test_unit",
+      "package_scripts_test_watch",
+      "package_type",
+      "package_version"
+    ],
+    "5": [
+      "src_domain",
+      "src_domain_attempt",
+      "src_domain_attemptoutcome",
+      "src_domain_bpmfromtaps",
+      "src_domain_cardstocsv",
+      "src_domain_clampbpm",
+      "src_domain_createcard",
+      "src_domain_csvcell",
+      "src_domain_recordattempt",
+      "src_domain_test",
+      "src_domain_validateimport",
+      "src_main_exportcsv"
+    ],
+    "6": [
+      "src_audio",
+      "src_audio_metronome",
+      "src_audio_metronome_onbeat",
+      "src_audio_metronome_running",
+      "src_audio_metronome_schedule",
+      "src_audio_metronome_start",
+      "src_audio_metronome_stop",
+      "src_audio_metronome_update"
+    ],
+    "7": [
+      "src_db",
+      "src_db_database",
+      "src_db_deletecard",
+      "src_db_getcards",
+      "src_db_mergecards",
+      "src_db_putcard",
+      "src_db_transaction",
+      "src_domain_practicecard"
+    ],
+    "8": [
+      "scripts_postbuild",
+      "scripts_postbuild_compiled",
+      "scripts_postbuild_hash",
+      "scripts_postbuild_indexpath",
+      "scripts_postbuild_localassets",
+      "scripts_postbuild_precache",
+      "scripts_postbuild_workerpath"
+    ],
+    "9": [
+      "src_main_clearbeat",
+      "src_main_keyboardshortcuts",
+      "src_main_setbpm",
+      "src_main_setstatus",
+      "src_main_showbeat",
+      "src_main_taptempo",
+      "src_main_togglemetronome"
+    ],
+    "10": [
+      "playwright_config"
+    ],
+    "11": [
+      "public_sw"
+    ],
+    "12": [
+      "tests_app_spec"
+    ],
+    "13": [
+      "vite_config"
+    ]
+  },
+  "cohesion": {
+    "0": 0.12183908045977011,
+    "1": 0.11764705882352941,
+    "2": 0.24175824175824176,
+    "3": 0.15384615384615385,
+    "4": 0.15384615384615385,
+    "5": 0.3333333333333333,
+    "6": 0.35714285714285715,
+    "7": 0.4642857142857143,
+    "8": 0.2857142857142857,
+    "9": 0.42857142857142855,
+    "10": 1.0,
+    "11": 1.0,
+    "12": 1.0,
+    "13": 1.0
+  },
+  "gods": [
+    {
+      "id": "src_main_bindhomeevents",
+      "label": "bindHomeEvents()",
+      "degree": 17
+    },
+    {
+      "id": "src_main_handlecardaction",
+      "label": "handleCardAction()",
+      "degree": 12
+    },
+    {
+      "id": "src_main_homepage",
+      "label": "homePage()",
+      "degree": 10
+    },
+    {
+      "id": "src_domain_clampbpm",
+      "label": "clampBpm()",
+      "degree": 9
+    },
+    {
+      "id": "tsconfig_compileroptions",
+      "label": "compilerOptions",
+      "degree": 9
+    },
+    {
+      "id": "package_scripts",
+      "label": "scripts",
+      "degree": 8
+    },
+    {
+      "id": "src_audio_metronome",
+      "label": "Metronome",
+      "degree": 8
+    },
+    {
+      "id": "src_main_handlecardsubmit",
+      "label": "handleCardSubmit()",
+      "degree": 8
+    },
+    {
+      "id": "src_main_showtoast",
+      "label": "showToast()",
+      "degree": 8
+    },
+    {
+      "id": "src_db_putcard",
+      "label": "putCard()",
+      "degree": 7
+    }
+  ],
+  "surprises": [
+    {
+      "source": "loadCards()",
+      "target": "getCards()",
+      "source_files": [
+        "src/main.ts",
+        "src/db.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "handleCardAction()",
+      "target": "putCard()",
+      "source_files": [
+        "src/main.ts",
+        "src/db.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "handleCardSubmit()",
+      "target": "putCard()",
+      "source_files": [
+        "src/main.ts",
+        "src/db.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "undoDelete()",
+      "target": "putCard()",
+      "source_files": [
+        "src/main.ts",
+        "src/db.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "handleCardAction()",
+      "target": "deleteCard()",
+      "source_files": [
+        "src/main.ts",
+        "src/db.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}
