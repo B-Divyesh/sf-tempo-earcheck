@@ -89,6 +89,8 @@ npm run build
   maskable icons.
 - Lighthouse 12.8.2 mobile: Performance 96, Accessibility 100, Best Practices
   100, SEO 100; FCP 1.0s, LCP 1.4s, TBT 210ms, CLS 0, total transfer 105 KiB.
+  A separate 390px Event Timing sample across tap/dialog interactions observed
+  a 32ms maximum duration, below the 200ms interaction budget.
 
 ## Privacy and scope
 
