@@ -10,28 +10,21 @@
       "src_main_carddialog",
       "src_main_cardmarkup",
       "src_main_cards",
-      "src_main_download",
       "src_main_escapehtml",
-      "src_main_exportjson",
       "src_main_footer",
       "src_main_formatdate",
       "src_main_homepage",
-      "src_main_importjson",
       "src_main_legalpage",
       "src_main_licensed",
       "src_main_licensemarkup",
-      "src_main_loadcards",
       "src_main_masthead",
       "src_main_meter",
       "src_main_meteroptions",
       "src_main_metronome",
-      "src_main_opencarddialog",
       "src_main_processlicense",
-      "src_main_registerserviceworker",
       "src_main_renderlicense",
       "src_main_restorelicense",
       "src_main_setmeter",
-      "src_main_showtoast",
       "src_main_taps",
       "src_main_updatenetwork",
       "src_main_updatetemponame",
@@ -59,14 +52,30 @@
       "tsconfig_include"
     ],
     "2": [
+      "src_domain_cardstocsv",
+      "src_domain_csvcell",
+      "src_main_announcecards",
+      "src_main_bindhomeevents",
+      "src_main_closecarddialog",
+      "src_main_download",
+      "src_main_exportcsv",
+      "src_main_exportjson",
+      "src_main_handlecardaction",
+      "src_main_handlecardsubmit",
+      "src_main_opencarddialog",
+      "src_main_registerserviceworker",
+      "src_main_rendercards",
+      "src_main_setvolume",
+      "src_main_showtoast",
+      "src_main_undodelete"
+    ],
+    "3": [
       "src_domain",
       "src_domain_attempt",
       "src_domain_attemptoutcome",
       "src_domain_bpmfromtaps",
-      "src_domain_cardstocsv",
       "src_domain_clampbpm",
       "src_domain_createcard",
-      "src_domain_csvcell",
       "src_domain_importattempt",
       "src_domain_importdate",
       "src_domain_importerror",
@@ -75,26 +84,25 @@
       "src_domain_importtext",
       "src_domain_recordattempt",
       "src_domain_test",
-      "src_domain_validateimport",
-      "src_main_exportcsv"
-    ],
-    "3": [
-      "src_db",
-      "src_db_database",
-      "src_db_deletecard",
-      "src_db_getcards",
-      "src_db_mergecards",
-      "src_db_putcard",
-      "src_db_transaction",
-      "src_domain_practicecard",
-      "src_main_announcecards",
-      "src_main_closecarddialog",
-      "src_main_handlecardaction",
-      "src_main_handlecardsubmit",
-      "src_main_rendercards",
-      "src_main_undodelete"
+      "src_domain_validateimport"
     ],
     "4": [
+      "package",
+      "package_name",
+      "package_private",
+      "package_scripts",
+      "package_scripts_build",
+      "package_scripts_dev",
+      "package_scripts_preview",
+      "package_scripts_test",
+      "package_scripts_test_e2e",
+      "package_scripts_test_live",
+      "package_scripts_test_unit",
+      "package_scripts_test_watch",
+      "package_type",
+      "package_version"
+    ],
+    "5": [
       "axe_core_playwright",
       "package_devdependencies",
       "package_devdependencies_axe_core_playwright",
@@ -109,31 +117,17 @@
       "vite",
       "vitest"
     ],
-    "5": [
-      "package",
-      "package_name",
-      "package_private",
-      "package_scripts",
-      "package_scripts_build",
-      "package_scripts_dev",
-      "package_scripts_preview",
-      "package_scripts_test",
-      "package_scripts_test_e2e",
-      "package_scripts_test_unit",
-      "package_scripts_test_watch",
-      "package_type",
-      "package_version"
-    ],
     "6": [
-      "src_main_bindhomeevents",
-      "src_main_clearbeat",
-      "src_main_keyboardshortcuts",
-      "src_main_setbpm",
-      "src_main_setstatus",
-      "src_main_setvolume",
-      "src_main_showbeat",
-      "src_main_taptempo",
-      "src_main_togglemetronome"
+      "src_db",
+      "src_db_database",
+      "src_db_deletecard",
+      "src_db_getcards",
+      "src_db_mergecards",
+      "src_db_putcard",
+      "src_db_transaction",
+      "src_domain_practicecard",
+      "src_main_importjson",
+      "src_main_loadcards"
     ],
     "7": [
       "src_audio",
@@ -155,39 +149,54 @@
       "scripts_postbuild_workerpath"
     ],
     "9": [
+      "src_main_clearbeat",
+      "src_main_keyboardshortcuts",
+      "src_main_setbpm",
+      "src_main_setstatus",
+      "src_main_showbeat",
+      "src_main_taptempo",
+      "src_main_togglemetronome"
+    ],
+    "10": [
       "src_release_policy_test",
       "src_release_policy_test_config",
       "src_release_policy_test_route",
       "src_release_policy_test_staticconfig"
     ],
-    "10": [
-      "playwright_config"
-    ],
     "11": [
-      "public_sw"
+      "scripts_verify_live",
+      "scripts_verify_live_hostedcheckout"
     ],
     "12": [
-      "tests_app_spec"
+      "playwright_config"
     ],
     "13": [
+      "public_sw"
+    ],
+    "14": [
+      "tests_app_spec"
+    ],
+    "15": [
       "vite_config"
     ]
   },
   "cohesion": {
-    "0": 0.10476190476190476,
+    "0": 0.12315270935960591,
     "1": 0.1111111111111111,
-    "2": 0.26143790849673204,
-    "3": 0.27472527472527475,
-    "4": 0.15384615384615385,
+    "2": 0.20833333333333334,
+    "3": 0.3333333333333333,
+    "4": 0.14285714285714285,
     "5": 0.15384615384615385,
-    "6": 0.3888888888888889,
+    "6": 0.35555555555555557,
     "7": 0.35714285714285715,
     "8": 0.2857142857142857,
-    "9": 0.5,
-    "10": 1.0,
+    "9": 0.42857142857142855,
+    "10": 0.5,
     "11": 1.0,
     "12": 1.0,
-    "13": 1.0
+    "13": 1.0,
+    "14": 1.0,
+    "15": 1.0
   },
   "gods": [
     {
@@ -216,13 +225,13 @@
       "degree": 9
     },
     {
-      "id": "src_audio_metronome",
-      "label": "Metronome",
-      "degree": 8
+      "id": "package_scripts",
+      "label": "scripts",
+      "degree": 9
     },
     {
-      "id": "src_main_showtoast",
-      "label": "showToast()",
+      "id": "src_audio_metronome",
+      "label": "Metronome",
       "degree": 8
     },
     {
@@ -236,45 +245,12 @@
       "degree": 8
     },
     {
-      "id": "package_scripts",
-      "label": "scripts",
+      "id": "src_main_showtoast",
+      "label": "showToast()",
       "degree": 8
     }
   ],
   "surprises": [
-    {
-      "source": "importJson()",
-      "target": "mergeCards()",
-      "source_files": [
-        "src/main.ts",
-        "src/db.ts"
-      ],
-      "confidence": "EXTRACTED",
-      "relation": "calls",
-      "why": "bridges separate communities"
-    },
-    {
-      "source": "importJson()",
-      "target": "validateImport()",
-      "source_files": [
-        "src/main.ts",
-        "src/domain.ts"
-      ],
-      "confidence": "EXTRACTED",
-      "relation": "calls",
-      "why": "bridges separate communities"
-    },
-    {
-      "source": "loadCards()",
-      "target": "getCards()",
-      "source_files": [
-        "src/main.ts",
-        "src/db.ts"
-      ],
-      "confidence": "EXTRACTED",
-      "relation": "calls",
-      "why": "bridges separate communities"
-    },
     {
       "source": "tapTempo()",
       "target": "bpmFromTaps()",
@@ -289,6 +265,39 @@
     {
       "source": "handleCardSubmit()",
       "target": "clampBpm()",
+      "source_files": [
+        "src/main.ts",
+        "src/domain.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "setBpm()",
+      "target": "clampBpm()",
+      "source_files": [
+        "src/main.ts",
+        "src/domain.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "handleCardSubmit()",
+      "target": "createCard()",
+      "source_files": [
+        "src/main.ts",
+        "src/domain.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "handleCardAction()",
+      "target": "recordAttempt()",
       "source_files": [
         "src/main.ts",
         "src/domain.ts"
