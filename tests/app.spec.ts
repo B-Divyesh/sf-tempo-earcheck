@@ -46,6 +46,15 @@ test('keyboard tap path and legal routes work', async ({ page }) => {
   await expect(page.locator('h1')).toHaveCount(1);
 });
 
+test('Space preserves native activation on focused controls', async ({ page }) => {
+  await page.goto('/');
+  const newCard = page.getByRole('button', { name: 'New practice card' });
+  await newCard.focus();
+  await page.keyboard.press('Space');
+  await expect(page.getByRole('dialog', { name: 'Record this trial' })).toBeVisible();
+  await expect(page.locator('#tempo-status')).toHaveText('Tap at least twice, or set a number.');
+});
+
 test('installed shell reopens offline', async ({ page, context }) => {
   await page.goto('/');
   await page.evaluate(() => navigator.serviceWorker.ready);
@@ -99,15 +108,17 @@ test('malicious imported history remains inert and makes no request', async ({ p
   expect(unexpectedRequests).toEqual([]);
 });
 
-test('visible interactive targets meet the 44px mobile hit-area contract', async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== 'mobile', 'mobile-only target sizing assertion');
+test('visible interactive targets meet the 44px hit-area contract', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'New practice card' }).click();
   await page.getByLabel('Passage or exercise *').fill('Target test');
   await page.getByRole('button', { name: 'Save practice card' }).click();
-  for (const locator of [page.locator('#bpm-range'), page.locator('#volume'), page.getByRole('button', { name: 'Delete card' }), page.getByRole('link', { name: 'Privacy' }), page.getByRole('link', { name: 'Terms' })]) {
+  for (const locator of [page.getByRole('link', { name: 'Tempo Earcheck home' }), page.locator('#bpm-range'), page.locator('#volume'), page.getByRole('button', { name: 'Delete card' }), page.getByRole('link', { name: 'Privacy' }), page.getByRole('link', { name: 'Terms' })]) {
     expect((await locator.boundingBox())?.height).toBeGreaterThanOrEqual(44);
   }
+
+  await page.goto('/privacy');
+  expect((await page.getByRole('link', { name: 'sociobot.in' }).boundingBox())?.height).toBeGreaterThanOrEqual(44);
 });
 
 test('390px layout has no horizontal overflow', async ({ page }, testInfo) => {

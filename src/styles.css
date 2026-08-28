@@ -80,7 +80,7 @@ a { color: inherit; text-underline-offset: 3px; }
   gap: 24px;
 }
 
-.wordmark { text-decoration: none; line-height: 1; }
+.wordmark { display: inline-flex; min-height: 44px; flex-direction: column; justify-content: center; text-decoration: none; line-height: 1; }
 .wordmark > span:last-child { display: block; font-family: var(--serif); font-size: 28px; font-weight: 700; letter-spacing: -1.5px; }
 
 .edition, .kicker, .section-rule, .network-state {
@@ -116,6 +116,7 @@ h3 { font-size: 28px; letter-spacing: -0.02em; }
 
 .lede { max-width: 660px; margin: 28px 0; font-family: var(--serif); font-size: clamp(19px, 2vw, 24px); line-height: 1.45; }
 .text-link { display: inline-block; min-height: 44px; padding-block: 9px; font-weight: 700; text-decoration-thickness: 2px; }
+.contact-link { display: inline-flex; min-height: 44px; align-items: center; }
 
 .hero figure { margin: 0; border-bottom: 8px solid var(--ink); transform: rotate(0.6deg); background: #e9dfc8; }
 .hero picture, .hero img { display: block; width: 100%; height: auto; }

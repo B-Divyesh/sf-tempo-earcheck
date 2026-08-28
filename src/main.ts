@@ -78,7 +78,7 @@ function legalPage(kind: 'privacy' | 'terms'): void {
       <h2>What stays on your device</h2><p>Practice cards and result history are stored in your browser’s IndexedDB. Tempo, meter, volume, and any license token are stored locally. You can export or erase cards at any time.</p>
       <h2>What crosses the network</h2><p>The app makes no analytics or advertising requests. If you buy or restore Notebook edition, your browser contacts the Sociobot billing API to open checkout and verify the license. Sociobot/Dodo is the merchant of record and handles payment information; Tempo Earcheck never receives card details.</p>
       <h2>Microphone and audio</h2><p>No microphone permission is requested. Click sounds are synthesized on your device with Web Audio and are not recorded.</p>
-      <h2>Contact</h2><p>Questions may be sent through <a href="https://sociobot.in">sociobot.in</a>. Last updated 27 August 2026.</p>`
+      <h2>Contact</h2><p>Questions may be sent through <a class="contact-link" href="https://sociobot.in">sociobot.in</a>. Last updated 27 August 2026.</p>`
       : `<p class="lede">Use Tempo Earcheck as a personal tempo and rehearsal notebook. It is a decision aid, not a hearing test or medical device.</p>
       <h2>License</h2><p>The free edition may be used without an account. A $9 one-time purchase unlocks Notebook edition for the purchaser. A valid license may be restored on the purchaser’s devices and can be revoked after a refund or misuse.</p>
       <h2>Purchases and refunds</h2><p>Sociobot/Dodo is the merchant of record. Checkout, receipts, taxes, and refunds are handled by that service. Refunded licenses are automatically revoked.</p>
@@ -488,8 +488,8 @@ function announceCards(message: string): void {
 
 function keyboardShortcuts(event: KeyboardEvent): void {
   const target = event.target as HTMLElement;
-  const enteringText = target.matches('input, textarea, select') || target.isContentEditable || Boolean(target.closest('dialog'));
-  if (enteringText || event.ctrlKey || event.metaKey || event.altKey) return;
+  const isInteractive = Boolean(target.closest('a, button, input, textarea, select, summary, [contenteditable="true"], [role="button"], [role="link"]'));
+  if (isInteractive || target.isContentEditable || target.closest('dialog') || event.ctrlKey || event.metaKey || event.altKey) return;
   if (event.code === 'Space') {
     event.preventDefault();
     tapTempo();

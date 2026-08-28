@@ -38,6 +38,10 @@ npm run build  # reproducible static output in ./dist
 npm run preview
 ```
 
+After deployment, `npm run test:live` confirms that the live HTML matches the
+local build and that the $9 purchase action opens the registered hosted
+checkout. It never submits payment details.
+
 The static deployment root is `dist/`; `dist/index.html` is the main entry. The build also emits direct static entries for `/privacy/` and `/terms/`. `scripts/postbuild.mjs` discovers hashed assets and inserts them into the versioned service-worker precache.
 
 ## Data and privacy
