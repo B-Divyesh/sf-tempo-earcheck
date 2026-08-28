@@ -12,6 +12,9 @@
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "DENY"
   },
+  "mimeTypes": {
+    ".webmanifest": "application/manifest+json"
+  },
   "routes": [
     {
       "route": "/assets/*",
@@ -23,10 +26,7 @@
     },
     {
       "route": "/manifest.webmanifest",
-      "headers": {
-        "Cache-Control": "public, max-age=300, must-revalidate",
-        "Content-Type": "application/manifest+json; charset=utf-8"
-      }
+      "headers": { "Cache-Control": "public, max-age=300, must-revalidate" }
     },
     {
       "route": "/sw.js",

@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 type StaticConfig = {
   globalHeaders: Record<string, string>;
+  mimeTypes: Record<string, string>;
   routes: Array<{ route: string; headers: Record<string, string> }>;
 };
 
@@ -23,7 +24,7 @@ describe('production response policy', () => {
     expect(route('/assets/*')?.['Cache-Control']).toContain('immutable');
     expect(route('/icons/*')?.['Cache-Control']).toContain('immutable');
     expect(route('/sw.js')?.['Cache-Control']).toContain('no-cache');
-    expect(route('/manifest.webmanifest')?.['Content-Type']).toContain('application/manifest+json');
+    expect(config.mimeTypes['.webmanifest']).toBe('application/manifest+json');
     expect(route('/*')?.['Cache-Control']).toContain('must-revalidate');
   });
 });
