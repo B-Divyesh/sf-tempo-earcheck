@@ -1,21 +1,24 @@
-# Tempo Earcheck verification handoff — FAIL
+# Tempo Earcheck verification handoff — FAIL (verification 2)
 
-**Candidate:** `abaab38a45d2e70681fa77bb38429f93ab6b8094`
-**Verified URL:** `https://tempo-earcheck.sociobot.in/` on 2026-08-27 UTC
+**Candidate:** `abaab38a45d2e70681fa77bb38429f93ab6b8094`  
+**Verified URL:** `https://tempo-earcheck.sociobot.in/` on 2026-08-28 UTC
 
-Independent QA has **failed** this candidate. The exact local commit installs,
-tests, type-checks, builds, meets the JS/CSS budgets, passes axe serious/critical
-checks, and has working offline/update flows. It must not be released because:
+Independent QA has **failed** this candidate. The live URL now serves the exact
+candidate build (the earlier certificate/404 deployment failure is resolved),
+and clean install, type-check, tests, production build, normal/recovery flows,
+desktop/390px accessibility, offline reload, and service-worker update flow
+all pass.
 
-1. The required production hostname has a certificate-name mismatch and returns
-   `404 Site Not Found`, rather than the candidate app.
-2. A crafted, user-selected JSON backup executes JavaScript via unescaped
-   imported attempt history (stored XSS) and can make outbound requests.
-3. Several rendered interactive targets are shorter than the required 44px.
+Do not release because a crafted but accepted JSON backup executes arbitrary
+JavaScript through unvalidated attempt-history data (P1 stored XSS). It can
+read the local notebook and license token and make outbound requests. Visible
+range controls, Delete card, and legal links are also below the 44px touch
+target requirement; live response policy/caching lacks CSP and immutable
+hashed-asset caching.
 
-Full commands, exact observations, severity, and remediation are in
-`.factory/verification.md`. Re-run the documented verification after repairing
-the deployment and defects.
+Exact reproduction, byte-identical live identity hashes, commands, passing
+coverage, severity, and required remediation are in
+`.factory/verification-2.md`.
 
 ---
 

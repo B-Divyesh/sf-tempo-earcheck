@@ -205,11 +205,6 @@
       "degree": 9
     },
     {
-      "id": "package_scripts",
-      "label": "scripts",
-      "degree": 8
-    },
-    {
       "id": "src_audio_metronome",
       "label": "Metronome",
       "degree": 8
@@ -225,8 +220,13 @@
       "degree": 8
     },
     {
-      "id": "src_db_putcard",
-      "label": "putCard()",
+      "id": "package_scripts",
+      "label": "scripts",
+      "degree": 8
+    },
+    {
+      "id": "src_main_rendercards",
+      "label": "renderCards()",
       "degree": 7
     }
   ],
@@ -244,7 +244,7 @@
     },
     {
       "source": "handleCardAction()",
-      "target": "putCard()",
+      "target": "deleteCard()",
       "source_files": [
         "src/main.ts",
         "src/db.ts"
@@ -254,18 +254,7 @@
       "why": "bridges separate communities"
     },
     {
-      "source": "handleCardSubmit()",
-      "target": "putCard()",
-      "source_files": [
-        "src/main.ts",
-        "src/db.ts"
-      ],
-      "confidence": "EXTRACTED",
-      "relation": "calls",
-      "why": "bridges separate communities"
-    },
-    {
-      "source": "undoDelete()",
+      "source": "handleCardAction()",
       "target": "putCard()",
       "source_files": [
         "src/main.ts",
@@ -277,7 +266,18 @@
     },
     {
       "source": "handleCardAction()",
-      "target": "deleteCard()",
+      "target": "recordAttempt()",
+      "source_files": [
+        "src/main.ts",
+        "src/domain.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "handleCardSubmit()",
+      "target": "putCard()",
       "source_files": [
         "src/main.ts",
         "src/db.ts"
