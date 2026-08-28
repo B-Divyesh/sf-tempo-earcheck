@@ -1,131 +1,193 @@
 # Verification report 4 — FAIL
 
-**Verified:** 2026-08-28 UTC  
-**Candidate:** `abaab38a45d2e70681fa77bb38429f93ab6b8094`  
+**Verified:** 2026-08-28 UTC
+
+**Candidate:** `abaab38a45d2e70681fa77bb38429f93ab6b8094`
+
 **Live URL:** <https://tempo-earcheck.sociobot.in/>
+
+**Clean checkout:** `/tmp/tempo-earcheck-qa4.7Rff0q`, detached at the candidate
 
 ## Verdict
 
-**FAIL — do not release.** The previous deployment-only failure is resolved:
-the live URL serves byte-for-byte the candidate production build and its PWA
-works offline. However, a normally accepted user backup can execute arbitrary
-JavaScript in the Tempo Earcheck origin. This is a P1 privacy and integrity
-failure for a local-first practice notebook.
+**FAIL — do not release.** The earlier deployment-only failure is resolved: the
+live hostname has valid HTTPS and serves the candidate build byte-for-byte.
+However, an accepted JSON backup can run script in the application origin, and
+the advertised one-time purchase endpoint returns 404. Both are major shipped
+flow failures. Target sizing and live response/cache policy also remain below
+the acceptance contract.
 
-## Release-blocking defect
+## Defects
 
-### P1 — imported attempt history is stored XSS
+### P1 — imported attempt history is interpreted as active HTML
 
-Fresh local production-browser reproduction against this exact candidate:
+Fresh reproduction against the clean local production build:
 
-1. Open the app and use **Import backup**.
-2. Select this otherwise valid backup, then accept its ordinary merge prompt:
+1. I selected a valid-looking Tempo Earcheck JSON backup through **Import
+   backup** and accepted the normal merge confirmation.
+2. Its `cards[0].history[0].bpm` value was an HTML `img` element with a missing
+   same-origin source and an `onerror` marker.
+3. After import, `.qa-import-marker` existed in the DOM,
+   `document.body.dataset.qaImport` was `rendered`, and Chromium requested
+   `/qa-import-network-check`.
 
-   ```json
-   {
-     "product": "tempo-earcheck",
-     "cards": [{
-       "id": "malicious-card", "name": "Imported card", "meter": 4,
-       "startBpm": 96, "passedBpm": null, "nextBpm": 96, "step": 4,
-       "note": "", "createdAt": "2026-08-28T00:00:00.000Z",
-       "updatedAt": "2026-08-28T00:00:00.000Z",
-       "history": [{
-         "id": "a", "at": "2026-08-28T00:00:00.000Z",
-         "bpm": "<img class='qa-xss' src=x onerror=\"document.body.dataset.qaXss='executed'\">",
-         "outcome": "passed"
-       }]
-     }]
-   }
-   ```
+`validateImport` copies `history` entries without validating their fields, and
+`cardMarkup` interpolates `attempt.at`, `attempt.bpm`, and `attempt.outcome`
+into `innerHTML`. Code running in this origin can read IndexedDB practice data
+and localStorage, including the optional license token, and can issue outbound
+requests. This violates the local-first privacy promise.
 
-3. The new card renders, `document.body.dataset.qaXss` becomes `executed`,
-   `.qa-xss` is present in the DOM, and the browser requests `/x`.
+Validate every attempt field (`id`, date, numeric BPM bounds, and enumerated
+outcome) and render imported values as text. Add a regression test confirming
+that HTML-bearing history remains inert and causes no request.
 
-`validateImport` accepts `history` without validating each attempt, then
-`cardMarkup` interpolates `attempt.bpm`, `attempt.at`, and `attempt.outcome`
-into `innerHTML`. Script in this origin can read IndexedDB and localStorage,
-including the optional `sb_license:tempo-earcheck` token, and exfiltrate them.
-Validate every attempt field (including numeric BPM bounds and enumerated
-outcome) and render untrusted values as text rather than HTML. Add a regression
-test for malicious `id`, `at`, `bpm`, and `outcome` values.
+### P1 — the advertised $9 purchase flow is unavailable
 
-## Other defects
+The live **Buy Notebook edition · $9** link points to the required Sociobot
+endpoint, but a fresh GET on 2026-08-28 returned:
 
-### P2 — visible touch targets miss the 44 × 44 CSS-pixel contract
+```text
+HTTP/2 404
+{"error":"enabled factory product","status":404}
+```
 
-Fresh Playwright measurement at the required 390 × 844 mobile viewport found:
+The invalid-license verification endpoint itself responded normally with
+`200 {"valid":false,"reason":"invalid",...}`. The frontend's mocked valid and
+invalid license handling also worked, but a customer cannot start checkout.
+Register and enable the live `tempo-earcheck` product at the advertised price,
+then verify the hosted checkout and return flow before release.
 
-- `#bpm-range`: 322 × 24px
-- `#volume`: 322 × 24px
-- `Delete card`: 93.8 × 36px
-- footer **Privacy**: 56.9 × 24px; **Terms**: 46.8 × 24px
+### P2 — visible interactive targets miss the 44 × 44px contract
 
-These are visible interactive controls. Give the actual targets (not just the
-surrounding whitespace) a 44px minimum height.
+At 390 × 844, measured rendered sizes were:
 
-### P2 — live response security and cache policies are incomplete
+| Control | Size |
+| --- | ---: |
+| Tempo range | 322 × 24px |
+| Volume range | 322 × 24px |
+| Delete card | 93.8 × 36px |
+| Privacy footer link | 56.9 × 24px |
+| Terms footer link | 46.8 × 24px |
 
-Live HTTPS responses include HSTS, `X-Content-Type-Options: nosniff`, and a
-strict referrer policy, but omit `Content-Security-Policy`,
-`Permissions-Policy`, frame-ancestors/X-Frame-Options, COOP, and CORP. The
-absent CSP notably provides no containment for the P1 injection. The HTML,
-manifest, service worker, hashed JS/CSS, and assets are all delivered with
-`Cache-Control: public, must-revalidate, max-age=30`, rather than immutable,
-long-lived caching for hashed assets. The manifest is also served as
-`application/octet-stream`.
+These are visible interactive controls. Increase their actual hit regions to
+at least 44px high.
+
+### P2 — live security and cache response policy is incomplete
+
+Live responses include HSTS, `nosniff`, and
+`Referrer-Policy: strict-origin-when-cross-origin`, but omit CSP,
+`Permissions-Policy`, frame protection (`frame-ancestors` or X-Frame-Options),
+COOP, and CORP. A CSP is particularly important given the P1 import behavior.
+
+HTML, the service worker, manifest, hashed JS/CSS, and images all return
+`Cache-Control: public, must-revalidate, max-age=30`. Content-hashed assets
+should be long-lived and immutable while HTML and `sw.js` remain promptly
+revalidatable. The manifest is served as `application/octet-stream` rather
+than a manifest/JSON MIME type, although Chromium parsed it without errors.
 
 ## Passing evidence
 
-### Clean candidate and quality gates
+### Clean checkout and repository gates
 
-- Detached clean worktree created at exactly `abaab38a45d2e70681fa77bb38429f93ab6b8094`.
-- `npm ci`: pass; audit reported 0 vulnerabilities.
-- After `npx playwright install chromium` for the lockfile's Playwright
-  1.62.1 browser revision, `npm test`: pass (4/4 Vitest; Playwright status
-  passed: 11 scenarios plus the intentional desktop-project skip for the
-  mobile-only assertion).
-- `npx tsc --noEmit`: pass. No lint script is declared.
-- `npm run build`: pass and produces `dist/`.
-- Built initial JS is 29,708 bytes (10,310 gzip), CSS is 15,236 bytes
-  (4,220 gzip), and the largest hero WebP is 89,654 bytes: all within the
-  stated static budgets.
-- Lighthouse 12.8.2, local production preview/mobile simulated throttling:
-  Performance 92, Accessibility 100, Best Practices 100, SEO 100; FCP 0.9s,
-  LCP 1.7s, CLS 0, TBT 330ms, transferred 105 KiB. Lighthouse logged a
-  post-collection target crash while capturing its full-page artifact, but
-  emitted the complete report and category scores.
+Environment: Node 22.23.2, npm 10.9.8.
 
-### Product, accessibility, and privacy checks
+```sh
+npm ci --include=dev
+npm run test:unit
+npx tsc --noEmit
+npm test
+npm run build
+```
 
-- Independently exercised 30/240 BPM and out-of-range number recovery,
-  2/4 and 12/4 meter rendering, keyboard-only Space tap tempo, hearing-safe
-  volume controls, blank-name/native validation, free-tier invalid step `3`
-  followed by recovery to `4`, three practice cards, passed-result next tempo,
-  persistence across reload, JSON export, delete confirmation and Undo.
-- Desktop visual review at 1440 × 1000 and mobile review at 390 × 844 passed;
-  mobile horizontal overflow was 0px. Keyboard Tab reaches the tap control and
-  shows its 3px visible focus treatment. Reduced motion resolves transitions
-  to 0.001ms.
-- Axe serious/critical findings: 0 locally and at the live URL. Local and live
-  console/page errors: 0 for normal usage.
-- A fresh normal live session made no third-party requests. Source inspection
-  finds no analytics, CDN fonts, or third-party scripts; only the explicit
-  Sociobot billing endpoint is contacted when a license is supplied.
+- Clean install passed with 0 audit vulnerabilities.
+- Vitest: 4/4 passed.
+- Playwright: 11 passed and one intentional desktop-project skip for the
+  mobile-only overflow assertion.
+- TypeScript passed. No lint script is declared in `package.json`.
+- Exact production build passed and created `dist/`; the detached worktree
+  remained clean.
+- Initial JS is 29,708 bytes (10,233 gzip), CSS is 15,236 bytes (4,203 gzip),
+  mobile hero WebP is 24,934 bytes, and 1280px WebP is 89,654 bytes. All stated
+  static budgets pass.
 
-### PWA and live identity
+Fresh Lighthouse 12.8.2 mobile simulated throttling against the local
+production preview: Performance **91**, Accessibility **100**, Best Practices
+**100**, SEO **100**; FCP 1.0s, LCP 1.9s, CLS 0, TBT 360ms, total transfer
+105KiB.
 
-- Local and live service-worker-controlled pages reloaded successfully with
-  Playwright offline mode enabled.
-- A disposable copy of the built worker was version-changed after activation;
-  the existing app profile displayed **“A fresh edition is ready.”** and its
-  **Update now** action, confirming the update notification path.
-- SHA-256 comparisons of live versus fresh `dist/` were identical for the app
-  HTML, hashed JS/CSS, service worker, manifest, offline page, legal pages,
-  icons, and hero asset. The live main JS hash is
-  `58328efe7f2f2d29cbc47fcd64ab693f442938fb2ad77269376a7aa9ad086dc6`.
+### Product flow and recovery
 
-## Required next step
+- Direct BPM clamps low/blank input to 30 and high input to 240; 2/4 and 12/4
+  render the correct beat counts. Two keyboard Space taps calculated 119 BPM.
+- Keyboard `M` started/stopped Web Audio with correct `aria-pressed` state.
+  Initial volume was 50% of the capped control and no microphone permission was
+  requested.
+- Required-name validation held the dialog open. Free step `3` produced the
+  specific error, and changing it to `4` saved successfully.
+- Three cards saved and survived reload. A 240 BPM pass stayed clamped at 240;
+  needs-work added a second history result. The five-card free limit gave a
+  clear upgrade/export message.
+- JSON and CSV downloads contained all three cards. Invalid JSON produced
+  visible feedback. Delete cancellation retained the card; confirmed delete
+  followed by **Undo** restored it.
+- The dialog focused its name field, stayed modal during keyboard traversal,
+  closed with Escape, and returned focus to **New practice card**.
+- License return handling stored the token, removed it from the URL, verified
+  once, reused the daily cached verdict on reload, and remained unlocked
+  offline. Invalid and blank restore states kept the free desk usable and gave
+  explicit feedback.
 
-Fix P1 before any release, add its regression coverage, then correct the
-target-size and deployment header/cache deficiencies and submit a new candidate
-for verification.
+### Accessibility, responsive behavior, and visual review
+
+- Local and live desktop 1440 × 1000 and mobile 390 × 844 had one `h1`, one
+  `main`, `lang=en`, correct titles, descriptive image alt text, and no
+  horizontal overflow.
+- Axe found **0 serious/critical violations** on local and live home, privacy,
+  and terms pages in desktop and mobile profiles (the full local scans returned
+  no violations at any impact level).
+- The skip link is first in tab order and visibly uses a 3px vermilion focus
+  outline. Form labels, live regions, dialog focus/return, and keyboard
+  shortcuts worked.
+- Reduced motion computed to 0.001ms transitions/animations and automatic
+  scrolling. Zoom is not disabled.
+- Fresh full-page visual review found the product-specific broadsheet hierarchy
+  intact on desktop and intentionally stacked on mobile. The original image
+  matches the recorded provenance and showed no visible text artifact, logo,
+  seam, or layout distortion.
+
+### Privacy, PWA, and live identity
+
+- A fresh normal session made only same-origin app/asset requests. Source
+  inspection found no analytics, telemetry, CDN font/script, microphone, or
+  runtime cross-origin call beyond the disclosed Sociobot license endpoint.
+  The P1 import behavior is the privacy exception.
+- Local and live service-worker-controlled pages reloaded offline with the
+  main experience present and no console/page errors.
+- A fresh controlled worker version test displayed **A fresh edition is
+  ready. / Update now**; activation replaced the old shell cache, retained a
+  controller, and left no waiting/installing worker.
+- Chromium parsed the local and live manifests without errors; standalone
+  display, versioned start URL, theme/background colors, and 192/512/maskable
+  icons are present.
+- Live desktop/mobile normal journeys produced 0 console errors, page errors,
+  and failed requests.
+- HTTPS returns 200 and HTTP redirects 301 to HTTPS. Fresh SHA-256 comparison
+  matched all 13 checked candidate outputs: home, privacy, terms, offline page,
+  service worker, manifest, hashed JS/CSS, both WebPs, and all three PNG icons.
+  Key hashes:
+
+| File | SHA-256 |
+| --- | --- |
+| `index.html` | `edb326fe19c8d24c3a35be47033ec2a4d45be26b3ebc0bbf3b7901ba16face45` |
+| `sw.js` | `868424709035929d72452a4208006d9888bb65534734d3ea5213d36a954c9881` |
+| `assets/main-DCBmwgJn.js` | `58328efe7f2f2d29cbc47fcd64ab693f442938fb2ad77269376a7aa9ad086dc6` |
+| `assets/style-8AIejL1m.css` | `b885ca41efad3c7a959dc5a53fa716eaa01a6dfb780cb592e71d20a8f0f70505` |
+
+## Required before re-verification
+
+1. Make imported attempt history strictly validated and inert, with regression
+   coverage for every history field and absence of resulting requests.
+2. Enable the live Sociobot product and verify the checkout/return journey.
+3. Bring all interactive hit regions to at least 44 × 44px.
+4. Add production CSP/frame/permissions policy, correct manifest MIME, and use
+   immutable caching for hashed assets while keeping HTML/SW revalidatable.
