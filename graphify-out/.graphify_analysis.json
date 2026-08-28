@@ -221,8 +221,8 @@
       "degree": 8
     },
     {
-      "id": "package_scripts",
-      "label": "scripts",
+      "id": "src_main_showtoast",
+      "label": "showToast()",
       "degree": 8
     },
     {
@@ -236,23 +236,12 @@
       "degree": 8
     },
     {
-      "id": "src_main_showtoast",
-      "label": "showToast()",
+      "id": "package_scripts",
+      "label": "scripts",
       "degree": 8
     }
   ],
   "surprises": [
-    {
-      "source": "loadCards()",
-      "target": "getCards()",
-      "source_files": [
-        "src/main.ts",
-        "src/db.ts"
-      ],
-      "confidence": "EXTRACTED",
-      "relation": "calls",
-      "why": "bridges separate communities"
-    },
     {
       "source": "importJson()",
       "target": "mergeCards()",
@@ -265,8 +254,8 @@
       "why": "bridges separate communities"
     },
     {
-      "source": "handleCardSubmit()",
-      "target": "clampBpm()",
+      "source": "importJson()",
+      "target": "validateImport()",
       "source_files": [
         "src/main.ts",
         "src/domain.ts"
@@ -276,11 +265,11 @@
       "why": "bridges separate communities"
     },
     {
-      "source": "setBpm()",
-      "target": "clampBpm()",
+      "source": "loadCards()",
+      "target": "getCards()",
       "source_files": [
         "src/main.ts",
-        "src/domain.ts"
+        "src/db.ts"
       ],
       "confidence": "EXTRACTED",
       "relation": "calls",
@@ -289,6 +278,17 @@
     {
       "source": "tapTempo()",
       "target": "bpmFromTaps()",
+      "source_files": [
+        "src/main.ts",
+        "src/domain.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "handleCardSubmit()",
+      "target": "clampBpm()",
       "source_files": [
         "src/main.ts",
         "src/domain.ts"
