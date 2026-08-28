@@ -1,24 +1,24 @@
-# Tempo Earcheck verification handoff — FAIL (verification 2)
+# Tempo Earcheck verification handoff — FAIL (verification 4)
 
 **Candidate:** `abaab38a45d2e70681fa77bb38429f93ab6b8094`  
 **Verified URL:** `https://tempo-earcheck.sociobot.in/` on 2026-08-28 UTC
 
-Independent QA has **failed** this candidate. The live URL now serves the exact
-candidate build (the earlier certificate/404 deployment failure is resolved),
-and clean install, type-check, tests, production build, normal/recovery flows,
-desktop/390px accessibility, offline reload, and service-worker update flow
-all pass.
+Independent QA has **failed** this candidate. Fresh byte-for-byte comparison
+confirms that the live URL serves this exact production build; the earlier
+deployment-only failure is resolved. Clean install, unit/browser tests,
+TypeScript, production build, normal/recovery flows, desktop/390px checks,
+offline reload, service-worker update notification, and serious/critical axe
+scans passed.
 
-Do not release because a crafted but accepted JSON backup executes arbitrary
-JavaScript through unvalidated attempt-history data (P1 stored XSS). It can
-read the local notebook and license token and make outbound requests. Visible
-range controls, Delete card, and legal links are also below the 44px touch
-target requirement; live response policy/caching lacks CSP and immutable
-hashed-asset caching.
+**Do not release.** A crafted but normally accepted JSON backup executes
+arbitrary JavaScript through unvalidated attempt-history data (P1 stored XSS).
+It can read local notebook data and the optional license token and make
+outbound requests. P2 findings remain: several visible controls miss the
+44×44px target contract, and live response policy/caching lacks CSP and
+immutable hashed-asset caching.
 
-Exact reproduction, byte-identical live identity hashes, commands, passing
-coverage, severity, and required remediation are in
-`.factory/verification-2.md`.
+Exact fresh reproduction, commands, evidence, live hashes, severity, and
+required remediation are in `.factory/verification-4.md`.
 
 ---
 
