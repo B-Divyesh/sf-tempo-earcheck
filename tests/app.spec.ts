@@ -68,7 +68,7 @@ test('a returned purchase token is verified, stored, and removed from the URL', 
   expect(new URL(page.url()).searchParams.has('license')).toBe(false);
 });
 
-test('the purchase action uses the registered Sociobot checkout endpoint', async ({ page }) => {
+test('the purchase action uses the required Sociobot checkout endpoint', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('link', { name: 'Buy Notebook edition · $9' })).toHaveAttribute(
     'href',
