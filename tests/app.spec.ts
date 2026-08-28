@@ -121,6 +121,24 @@ test('visible interactive targets meet the 44px hit-area contract', async ({ pag
   expect((await page.getByRole('link', { name: 'sociobot.in' }).boundingBox())?.height).toBeGreaterThanOrEqual(44);
 });
 
+test('keyboard focus on Import backup is shown on its visible control', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#export-csv').focus();
+  await page.keyboard.press('Tab');
+  await expect.poll(() => page.evaluate(() => document.activeElement?.id)).toBe('import-file');
+  const focusStyle = await page.locator('.file-button').evaluate((label) => {
+    const style = getComputedStyle(label);
+    return { color: style.outlineColor, style: style.outlineStyle, width: style.outlineWidth };
+  });
+  expect(focusStyle).toEqual({ color: 'rgb(181, 50, 32)', style: 'solid', width: '3px' });
+});
+
+test('below-the-fold ownership content defers first-paint layout work', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('.ownership')).toHaveCSS('content-visibility', 'auto');
+  await expect(page.locator('footer')).toHaveCSS('content-visibility', 'auto');
+});
+
 test('390px layout has no horizontal overflow', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile', 'mobile-only layout assertion');
   await page.goto('/');
