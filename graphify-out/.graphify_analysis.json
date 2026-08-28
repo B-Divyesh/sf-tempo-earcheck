@@ -235,11 +235,6 @@
       "degree": 8
     },
     {
-      "id": "src_domain_clampbpm",
-      "label": "clampBpm()",
-      "degree": 8
-    },
-    {
       "id": "src_main_handlecardsubmit",
       "label": "handleCardSubmit()",
       "degree": 8
@@ -248,48 +243,31 @@
       "id": "src_main_showtoast",
       "label": "showToast()",
       "degree": 8
+    },
+    {
+      "id": "src_domain_clampbpm",
+      "label": "clampBpm()",
+      "degree": 8
     }
   ],
   "surprises": [
     {
-      "source": "tapTempo()",
-      "target": "bpmFromTaps()",
+      "source": "handleCardAction()",
+      "target": "deleteCard()",
       "source_files": [
         "src/main.ts",
-        "src/domain.ts"
+        "src/db.ts"
       ],
       "confidence": "EXTRACTED",
       "relation": "calls",
       "why": "bridges separate communities"
     },
     {
-      "source": "handleCardSubmit()",
-      "target": "clampBpm()",
+      "source": "handleCardAction()",
+      "target": "putCard()",
       "source_files": [
         "src/main.ts",
-        "src/domain.ts"
-      ],
-      "confidence": "EXTRACTED",
-      "relation": "calls",
-      "why": "bridges separate communities"
-    },
-    {
-      "source": "setBpm()",
-      "target": "clampBpm()",
-      "source_files": [
-        "src/main.ts",
-        "src/domain.ts"
-      ],
-      "confidence": "EXTRACTED",
-      "relation": "calls",
-      "why": "bridges separate communities"
-    },
-    {
-      "source": "handleCardSubmit()",
-      "target": "createCard()",
-      "source_files": [
-        "src/main.ts",
-        "src/domain.ts"
+        "src/db.ts"
       ],
       "confidence": "EXTRACTED",
       "relation": "calls",
@@ -298,6 +276,28 @@
     {
       "source": "handleCardAction()",
       "target": "recordAttempt()",
+      "source_files": [
+        "src/main.ts",
+        "src/domain.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "handleCardSubmit()",
+      "target": "putCard()",
+      "source_files": [
+        "src/main.ts",
+        "src/db.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "handleCardSubmit()",
+      "target": "clampBpm()",
       "source_files": [
         "src/main.ts",
         "src/domain.ts"
