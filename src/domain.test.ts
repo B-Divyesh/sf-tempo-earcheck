@@ -34,4 +34,22 @@ describe('practice cards', () => {
     expect(() => validateImport({ cards: [] })).toThrow(/not a Tempo/);
     vi.unstubAllGlobals();
   });
+
+  it.each([
+    ['id', '<img src=/qa-import-network-check onerror=alert(1)>'],
+    ['at', '<img src=/qa-import-network-check onerror=alert(1)>'],
+    ['bpm', '<img src=/qa-import-network-check onerror=alert(1)>'],
+    ['outcome', '<img src=/qa-import-network-check onerror=alert(1)>']
+  ])('rejects an unsafe imported attempt %s before it reaches rendering', (field, value) => {
+    const card = createCard({ name: 'Safe scale', bpm: 90, meter: 4, step: 4, note: '' });
+    const attempt = { id: 'attempt-1', at: '2026-08-28T00:00:00.000Z', bpm: 90, outcome: 'passed' } as Record<string, unknown>;
+    attempt[field] = value;
+    expect(() => validateImport({ product: 'tempo-earcheck', cards: [{ ...card, history: [attempt] }] })).toThrow(/attempt/i);
+  });
+
+  it('accepts a complete valid attempt history without coercing its fields', () => {
+    const card = createCard({ name: 'Safe scale', bpm: 90, meter: 4, step: 4, note: '' });
+    const history = [{ id: 'attempt-1', at: '2026-08-28T00:00:00.000Z', bpm: 90, outcome: 'passed' as const }];
+    expect(validateImport({ product: 'tempo-earcheck', cards: [{ ...card, history }] })[0].history).toEqual(history);
+  });
 });

@@ -21,6 +21,55 @@ export interface PracticeCard {
   history: Attempt[];
 }
 
+const safeId = /^[A-Za-z0-9_-]{1,128}$/;
+
+function importError(message: string): never {
+  throw new Error(message);
+}
+
+function importId(value: unknown, label: string): string {
+  if (typeof value !== 'string' || !safeId.test(value)) {
+    return importError(`${label} has an invalid id.`);
+  }
+  return value;
+}
+
+function importText(value: unknown, label: string, maxLength: number, required = false): string {
+  if (typeof value !== 'string' || value.length > maxLength || (required && !value.trim())) {
+    return importError(`${label} is damaged.`);
+  }
+  return value.trim();
+}
+
+function importInteger(value: unknown, label: string, minimum: number, maximum: number): number {
+  if (typeof value !== 'number' || !Number.isInteger(value) || value < minimum || value > maximum) {
+    return importError(`${label} is damaged.`);
+  }
+  return value;
+}
+
+function importDate(value: unknown, label: string): string {
+  const parsed = typeof value === 'string' ? new Date(value) : null;
+  if (!parsed || !Number.isFinite(parsed.getTime()) || parsed.toISOString() !== value) {
+    return importError(`${label} has an invalid date.`);
+  }
+  return value;
+}
+
+function importAttempt(value: unknown): Attempt {
+  if (!value || typeof value !== 'object') return importError('One recorded attempt is damaged.');
+  const attempt = value as Partial<Attempt>;
+  if (attempt.outcome !== 'passed' && attempt.outcome !== 'needs-work') {
+    return importError('One recorded attempt has an invalid outcome.');
+  }
+  return {
+    id: importId(attempt.id, 'One recorded attempt'),
+    at: importDate(attempt.at, 'One recorded attempt'),
+    bpm: importInteger(attempt.bpm, 'One recorded attempt BPM', 30, 240),
+    outcome: attempt.outcome
+  };
+}
+
 export const clampBpm = (value: number): number =>
   Math.min(240, Math.max(30, Math.round(Number.isFinite(value) ? value : 96)));
 
@@ -101,21 +150,20 @@ export function validateImport(value: unknown): PracticeCard[] {
   return candidate.cards.map((raw) => {
     if (!raw || typeof raw !== 'object') throw new Error('One practice card is damaged.');
     const card = raw as Partial<PracticeCard>;
-    if (!card.id || !card.name || !card.createdAt || !card.updatedAt) {
-      throw new Error('One practice card is missing required fields.');
-    }
+    if (!Array.isArray(card.history)) throw new Error('One practice card has damaged attempt history.');
+    if (card.history.length > 1000) throw new Error('One practice card has too much attempt history.');
     return {
-      id: String(card.id),
-      name: String(card.name).slice(0, 80),
-      meter: Math.min(12, Math.max(2, Number(card.meter) || 4)),
-      startBpm: clampBpm(Number(card.startBpm)),
-      passedBpm: card.passedBpm == null ? null : clampBpm(Number(card.passedBpm)),
-      nextBpm: clampBpm(Number(card.nextBpm)),
-      step: Math.min(24, Math.max(1, Number(card.step) || 4)),
-      note: String(card.note ?? '').slice(0, 500),
-      createdAt: String(card.createdAt),
-      updatedAt: String(card.updatedAt),
-      history: Array.isArray(card.history) ? card.history.slice(0, 1000) as Attempt[] : []
+      id: importId(card.id, 'One practice card'),
+      name: importText(card.name, 'One practice card name', 80, true),
+      meter: importInteger(card.meter, 'One practice card meter', 2, 12),
+      startBpm: importInteger(card.startBpm, 'One practice card starting BPM', 30, 240),
+      passedBpm: card.passedBpm == null ? null : importInteger(card.passedBpm, 'One practice card passed BPM', 30, 240),
+      nextBpm: importInteger(card.nextBpm, 'One practice card next BPM', 30, 240),
+      step: importInteger(card.step, 'One practice card step', 1, 24),
+      note: importText(card.note ?? '', 'One practice card note', 500),
+      createdAt: importDate(card.createdAt, 'One practice card'),
+      updatedAt: importDate(card.updatedAt, 'One practice card'),
+      history: card.history.map(importAttempt)
     };
   });
 }

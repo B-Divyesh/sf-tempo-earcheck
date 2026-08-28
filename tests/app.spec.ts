@@ -68,6 +68,48 @@ test('a returned purchase token is verified, stored, and removed from the URL', 
   expect(new URL(page.url()).searchParams.has('license')).toBe(false);
 });
 
+test('the purchase action uses the registered Sociobot checkout endpoint', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByRole('link', { name: 'Buy Notebook edition · $9' })).toHaveAttribute(
+    'href',
+    'https://api.sociobot.in/api/v1/products/tempo-earcheck/checkout'
+  );
+});
+
+test('malicious imported history remains inert and makes no request', async ({ page }) => {
+  const unexpectedRequests: string[] = [];
+  page.on('request', (request) => {
+    if (request.url().includes('/qa-import-network-check')) unexpectedRequests.push(request.url());
+  });
+  await page.goto('/');
+  const backup = {
+    product: 'tempo-earcheck',
+    version: 1,
+    exportedAt: '2026-08-28T00:00:00.000Z',
+    cards: [{
+      id: 'card-1', name: 'Imported scale', meter: 4, startBpm: 90, passedBpm: null,
+      nextBpm: 90, step: 4, note: '', createdAt: '2026-08-28T00:00:00.000Z', updatedAt: '2026-08-28T00:00:00.000Z',
+      history: [{ id: 'attempt-1', at: '2026-08-28T00:00:00.000Z', bpm: '<img class="qa-import-marker" src="/qa-import-network-check" onerror="document.body.dataset.qaImport=\'rendered\'">', outcome: 'passed' }]
+    }]
+  };
+  await page.locator('#import-file').setInputFiles({ name: 'malicious-backup.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(backup)) });
+  await expect(page.getByText(/recorded attempt BPM is damaged/i)).toBeVisible();
+  await expect(page.locator('.qa-import-marker')).toHaveCount(0);
+  expect(await page.evaluate(() => document.body.dataset.qaImport)).toBeUndefined();
+  expect(unexpectedRequests).toEqual([]);
+});
+
+test('visible interactive targets meet the 44px mobile hit-area contract', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile', 'mobile-only target sizing assertion');
+  await page.goto('/');
+  await page.getByRole('button', { name: 'New practice card' }).click();
+  await page.getByLabel('Passage or exercise *').fill('Target test');
+  await page.getByRole('button', { name: 'Save practice card' }).click();
+  for (const locator of [page.locator('#bpm-range'), page.locator('#volume'), page.getByRole('button', { name: 'Delete card' }), page.getByRole('link', { name: 'Privacy' }), page.getByRole('link', { name: 'Terms' })]) {
+    expect((await locator.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+  }
+});
+
 test('390px layout has no horizontal overflow', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile', 'mobile-only layout assertion');
   await page.goto('/');

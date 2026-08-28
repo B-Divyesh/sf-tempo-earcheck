@@ -91,8 +91,8 @@ a { color: inherit; text-underline-offset: 3px; }
 }
 
 .edition { margin-bottom: 5px; color: var(--soft-ink); }
-.masthead nav, footer nav { display: flex; gap: 24px; font-weight: 700; }
-.masthead nav a, footer nav a { text-decoration-thickness: 1px; }
+.masthead nav, footer nav { display: flex; gap: 12px; font-weight: 700; }
+.masthead nav a, footer nav a { display: inline-flex; align-items: center; min-height: 44px; padding-inline: 6px; text-decoration-thickness: 1px; }
 .network-state { justify-self: end; padding-left: 13px; position: relative; }
 .network-state::before { content: ''; position: absolute; left: 0; top: 6px; width: 7px; height: 7px; border-radius: 50%; background: var(--success); }
 
@@ -161,7 +161,7 @@ input, select, textarea {
 }
 textarea { resize: vertical; min-height: 92px; }
 label { display: grid; gap: 7px; font-weight: 700; }
-.range { min-height: 24px; padding: 0; accent-color: var(--pencil); background: transparent; }
+.range { min-height: 44px; padding: 0; accent-color: var(--pencil); background: transparent; }
 .control-pair { display: grid; grid-template-columns: 0.7fr 1.3fr; gap: 16px; }
 .safety-note { margin: 0; padding-top: 12px; border-top: 1px solid var(--rule); color: var(--soft-ink); font-size: 14px; }
 .safety-note span { color: var(--success); }
@@ -214,7 +214,7 @@ kbd { padding: 3px 6px; border: 1px solid currentColor; font: 12px var(--sans); 
 .history ol { list-style: none; margin: 0; padding: 0; max-width: 800px; }
 .history li { display: grid; grid-template-columns: 1fr 0.7fr 0.8fr; gap: 12px; padding: 9px 0; border-top: 1px solid #bbb5a8; font-variant-numeric: tabular-nums; }
 .history-limit { color: var(--warning); }
-.delete-button { grid-column: 1 / -1; justify-self: end; min-height: 36px; border: 0; color: var(--danger); background: transparent; text-decoration: underline; }
+.delete-button { grid-column: 1 / -1; justify-self: end; min-height: 44px; padding-inline: 8px; border: 0; color: var(--danger); background: transparent; text-decoration: underline; }
 
 .ownership { padding: 64px clamp(24px, 4vw, 64px); border-block: 6px double var(--ink); display: grid; grid-template-columns: 1fr 1fr; gap: 64px; background: var(--sheet); }
 .ownership h2 { font-size: clamp(38px, 4vw, 58px); }

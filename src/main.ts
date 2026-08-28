@@ -226,17 +226,17 @@ function renderCards(): void {
 
 function cardMarkup(card: PracticeCard, index: number): string {
   const visibleHistory = licensed ? card.history : card.history.slice(0, 3);
-  return `<article class="practice-card" data-id="${card.id}">
-    <header><span class="folio">${String(index + 1).padStart(2, '0')}</span><div><h3>${escapeHtml(card.name)}</h3><p>${card.meter}/4 · updated <time datetime="${card.updatedAt}">${formatDate(card.updatedAt)}</time></p></div><button type="button" class="more-button" data-action="edit" aria-label="Edit ${escapeHtml(card.name)}">Edit</button></header>
+  return `<article class="practice-card" data-id="${escapeHtml(String(card.id))}">
+    <header><span class="folio">${String(index + 1).padStart(2, '0')}</span><div><h3>${escapeHtml(card.name)}</h3><p>${escapeHtml(String(card.meter))}/4 · updated <time datetime="${escapeHtml(card.updatedAt)}">${escapeHtml(formatDate(card.updatedAt))}</time></p></div><button type="button" class="more-button" data-action="edit" aria-label="Edit ${escapeHtml(card.name)}">Edit</button></header>
     ${card.note ? `<blockquote>“${escapeHtml(card.note)}”</blockquote>` : ''}
     <dl class="tempo-ledger">
-      <div><dt>Started</dt><dd>${card.startBpm}</dd></div>
-      <div><dt>Last passed</dt><dd>${card.passedBpm ?? '—'}</dd></div>
-      <div class="next-tempo"><dt>Try next</dt><dd>${card.nextBpm}<small> +${card.step}</small></dd></div>
+      <div><dt>Started</dt><dd>${escapeHtml(String(card.startBpm))}</dd></div>
+      <div><dt>Last passed</dt><dd>${card.passedBpm == null ? '—' : escapeHtml(String(card.passedBpm))}</dd></div>
+      <div class="next-tempo"><dt>Try next</dt><dd>${escapeHtml(String(card.nextBpm))}<small> +${escapeHtml(String(card.step))}</small></dd></div>
     </dl>
-    <div class="card-actions"><button type="button" data-action="try">Load ${card.nextBpm} BPM</button><button type="button" data-action="pass" class="pass-button">Mark current passed</button><button type="button" data-action="retry">Needs work</button></div>
+    <div class="card-actions"><button type="button" data-action="try">Load ${escapeHtml(String(card.nextBpm))} BPM</button><button type="button" data-action="pass" class="pass-button">Mark current passed</button><button type="button" data-action="retry">Needs work</button></div>
     <details class="history"><summary>Attempt history <span>${card.history.length}</span></summary>
-      ${visibleHistory.length ? `<ol>${visibleHistory.map((attempt) => `<li><time datetime="${attempt.at}">${formatDate(attempt.at)}</time><strong>${attempt.bpm} BPM</strong><span>${attempt.outcome === 'passed' ? 'Passed' : 'Needs work'}</span></li>`).join('')}</ol>` : '<p>No results recorded yet.</p>'}
+      ${visibleHistory.length ? `<ol>${visibleHistory.map((attempt) => `<li><time datetime="${escapeHtml(attempt.at)}">${escapeHtml(formatDate(attempt.at))}</time><strong>${escapeHtml(String(attempt.bpm))} BPM</strong><span>${attempt.outcome === 'passed' ? 'Passed' : 'Needs work'}</span></li>`).join('')}</ol>` : '<p>No results recorded yet.</p>'}
       ${!licensed && card.history.length > 3 ? `<p class="history-limit">Notebook edition shows all ${card.history.length} attempts. Your full history is still included in exports.</p>` : ''}
     </details>
     <button type="button" class="delete-button" data-action="delete">Delete card</button>
