@@ -6,9 +6,9 @@ Live URL: <https://tempo-earcheck.sociobot.in/>
 
 Implementation commit and deployed build: `4cef30cc6b2815a78d529a10bbc969a0025cfb78`
 
-Documentation commit: the later commit containing this handoff and Graphify
-outputs. Its SHA is reported separately in the worker's final response because
-a commit cannot contain its own SHA.
+Documentation and Graphify commit: the later commit containing this final
+handoff update and graph snapshot. Its SHA is reported in the worker's final
+response because a commit cannot contain its own SHA.
 
 ## What changed
 
