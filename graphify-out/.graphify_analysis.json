@@ -409,40 +409,51 @@
       "degree": 11
     },
     {
-      "id": "factory_verification_6_verification_report_6_fail",
-      "label": "Verification report 6 \u2014 FAIL",
-      "degree": 10
-    },
-    {
       "id": "package_scripts",
       "label": "scripts",
       "degree": 10
     },
     {
-      "id": "src_domain_validateimport",
-      "label": "validateImport()",
-      "degree": 9
-    },
-    {
-      "id": "tsconfig_compileroptions",
-      "label": "compilerOptions",
-      "degree": 9
-    },
-    {
-      "id": "factory_verification_7_verification_report_7_pass",
-      "label": "Verification report 7 \u2014 PASS",
-      "degree": 9
+      "id": "factory_verification_6_verification_report_6_fail",
+      "label": "Verification report 6 \u2014 FAIL",
+      "degree": 10
     },
     {
       "id": "src_db_putcard",
       "label": "putCard()",
       "degree": 9
+    },
+    {
+      "id": "src_main_handlecardsubmit",
+      "label": "handleCardSubmit()",
+      "degree": 9
+    },
+    {
+      "id": "src_main_setbpm",
+      "label": "setBpm()",
+      "degree": 9
+    },
+    {
+      "id": "src_domain_validateimport",
+      "label": "validateImport()",
+      "degree": 9
     }
   ],
   "surprises": [
     {
-      "source": "tapTempo()",
-      "target": "bpmFromTaps()",
+      "source": "handleCardAction()",
+      "target": "deleteCard()",
+      "source_files": [
+        "src/main.ts",
+        "src/db.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "handleCardAction()",
+      "target": "recordAttempt()",
       "source_files": [
         "src/main.ts",
         "src/domain.ts"
@@ -453,17 +464,6 @@
     },
     {
       "source": "handleCardSubmit()",
-      "target": "clampBpm()",
-      "source_files": [
-        "src/main.ts",
-        "src/domain.ts"
-      ],
-      "confidence": "EXTRACTED",
-      "relation": "calls",
-      "why": "bridges separate communities"
-    },
-    {
-      "source": "setBpm()",
       "target": "clampBpm()",
       "source_files": [
         "src/main.ts",
@@ -485,8 +485,8 @@
       "why": "bridges separate communities"
     },
     {
-      "source": "handleCardAction()",
-      "target": "recordAttempt()",
+      "source": "importJson()",
+      "target": "validateImport()",
       "source_files": [
         "src/main.ts",
         "src/domain.ts"
