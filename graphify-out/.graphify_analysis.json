@@ -1,37 +1,126 @@
 {
   "communities": {
     "0": [
+      "src_db_getcards",
+      "src_db_mergecards",
+      "src_db_putcard",
       "src_domain_temponame",
       "src_main",
+      "src_main_announcecards",
       "src_main_beatcells",
+      "src_main_bindhomeevents",
       "src_main_bindsharedevents",
       "src_main_bpm",
       "src_main_cachedlicenseisvalid",
       "src_main_carddialog",
       "src_main_cardmarkup",
       "src_main_cards",
+      "src_main_clearbeat",
+      "src_main_closecarddialog",
+      "src_main_download",
       "src_main_escapehtml",
+      "src_main_exportjson",
       "src_main_footer",
       "src_main_formatdate",
+      "src_main_handlecardaction",
+      "src_main_handlecardsubmit",
       "src_main_homepage",
+      "src_main_importjson",
+      "src_main_keyboardshortcuts",
       "src_main_legalpage",
       "src_main_licensed",
       "src_main_licensemarkup",
+      "src_main_loadcards",
       "src_main_masthead",
       "src_main_meter",
       "src_main_meteroptions",
       "src_main_metronome",
+      "src_main_notfoundpage",
+      "src_main_opencarddialog",
+      "src_main_preferredscrollbehavior",
       "src_main_processlicense",
+      "src_main_registerserviceworker",
+      "src_main_rendercards",
       "src_main_renderlicense",
+      "src_main_resetdemo",
       "src_main_restorelicense",
+      "src_main_samplecards",
+      "src_main_setbpm",
       "src_main_setmeter",
+      "src_main_setpagemetadata",
+      "src_main_setstatus",
+      "src_main_settingkey",
+      "src_main_setvolume",
+      "src_main_showbeat",
+      "src_main_showtoast",
       "src_main_taps",
+      "src_main_taptempo",
+      "src_main_togglemetronome",
+      "src_main_trapdialogfocus",
+      "src_main_undodelete",
       "src_main_updatenetwork",
       "src_main_updatetemponame",
       "src_main_verifylicense",
       "src_main_volume"
     ],
     "1": [
+      "axe_core_playwright",
+      "package",
+      "package_devdependencies",
+      "package_devdependencies_axe_core_playwright",
+      "package_devdependencies_playwright_test",
+      "package_devdependencies_types_node",
+      "package_devdependencies_typescript",
+      "package_devdependencies_vite",
+      "package_devdependencies_vitest",
+      "package_name",
+      "package_private",
+      "package_scripts",
+      "package_scripts_build",
+      "package_scripts_dev",
+      "package_scripts_preview",
+      "package_scripts_test",
+      "package_scripts_test_claims",
+      "package_scripts_test_e2e",
+      "package_scripts_test_live",
+      "package_scripts_test_unit",
+      "package_scripts_test_watch",
+      "package_type",
+      "package_version",
+      "playwright_test",
+      "types_node",
+      "typescript",
+      "vite",
+      "vitest"
+    ],
+    "2": [
+      "factory_design",
+      "factory_design_asset_plan_and_provenance",
+      "factory_design_direction",
+      "factory_design_layout_and_interaction_grammar",
+      "factory_design_motion_policy",
+      "factory_design_tempo_earcheck_visual_thesis",
+      "factory_design_tokens",
+      "factory_design_type",
+      "factory_handoff",
+      "factory_handoff_browser_accessibility_offline_and_performance_checks",
+      "factory_handoff_clean_verification",
+      "factory_handoff_deployment_and_offer",
+      "factory_handoff_known_limits",
+      "factory_handoff_review_finding_disposition",
+      "factory_handoff_tempo_earcheck_repair_4_handoff",
+      "factory_handoff_what_changed",
+      "readme",
+      "readme_clean_setup",
+      "readme_data_and_privacy",
+      "readme_design_and_handoff",
+      "readme_license",
+      "readme_tempo_earcheck",
+      "readme_test_and_build",
+      "readme_try_the_separate_sample_notebook",
+      "readme_what_it_includes"
+    ],
+    "3": [
       "ref_dom",
       "ref_dom_iterable",
       "ref_es2022",
@@ -51,31 +140,15 @@
       "tsconfig_compileroptions_usedefineforclassfields",
       "tsconfig_include"
     ],
-    "2": [
-      "src_domain_cardstocsv",
-      "src_domain_csvcell",
-      "src_main_announcecards",
-      "src_main_bindhomeevents",
-      "src_main_closecarddialog",
-      "src_main_download",
-      "src_main_exportcsv",
-      "src_main_exportjson",
-      "src_main_handlecardaction",
-      "src_main_handlecardsubmit",
-      "src_main_opencarddialog",
-      "src_main_registerserviceworker",
-      "src_main_rendercards",
-      "src_main_setvolume",
-      "src_main_showtoast",
-      "src_main_undodelete"
-    ],
-    "3": [
+    "4": [
       "src_domain",
       "src_domain_attempt",
       "src_domain_attemptoutcome",
       "src_domain_bpmfromtaps",
+      "src_domain_cardstocsv",
       "src_domain_clampbpm",
       "src_domain_createcard",
+      "src_domain_csvcell",
       "src_domain_importattempt",
       "src_domain_importdate",
       "src_domain_importerror",
@@ -84,52 +157,126 @@
       "src_domain_importtext",
       "src_domain_recordattempt",
       "src_domain_test",
-      "src_domain_validateimport"
-    ],
-    "4": [
-      "package",
-      "package_name",
-      "package_private",
-      "package_scripts",
-      "package_scripts_build",
-      "package_scripts_dev",
-      "package_scripts_preview",
-      "package_scripts_test",
-      "package_scripts_test_e2e",
-      "package_scripts_test_live",
-      "package_scripts_test_unit",
-      "package_scripts_test_watch",
-      "package_type",
-      "package_version"
+      "src_domain_validateimport",
+      "src_main_exportcsv"
     ],
     "5": [
-      "axe_core_playwright",
-      "package_devdependencies",
-      "package_devdependencies_axe_core_playwright",
-      "package_devdependencies_playwright_test",
-      "package_devdependencies_types_node",
-      "package_devdependencies_typescript",
-      "package_devdependencies_vite",
-      "package_devdependencies_vitest",
-      "playwright_test",
-      "types_node",
-      "typescript",
-      "vite",
-      "vitest"
+      "factory_review_1",
+      "factory_review_1_clean_checkout_commands",
+      "factory_review_1_current_product_evidence",
+      "factory_review_1_earlier_finding_disposition",
+      "factory_review_1_evidence_files",
+      "factory_review_1_f1_p1_the_required_demo_sandbox_does_not_exist",
+      "factory_review_1_f2_p1_public_claims_have_no_claim_registry_or_claim_tests",
+      "factory_review_1_f3_p2_hearing_safe_level_is_not_a_supportable_browser_claim",
+      "factory_review_1_f4_p2_the_first_screen_and_headings_do_not_meet_the_plain_words_contract",
+      "factory_review_1_f5_p2_required_site_sections_and_shared_navigation_details_are_missing",
+      "factory_review_1_f6_p2_required_page_metadata_is_incomplete",
+      "factory_review_1_f7_p2_unknown_routes_return_the_home_page_with_http_200",
+      "factory_review_1_findings",
+      "factory_review_1_job_audience_and_first_action",
+      "factory_review_1_live_behavior",
+      "factory_review_1_release_decision",
+      "factory_review_1_review_1_hear_test_and_record_practice_tempos"
     ],
     "6": [
-      "src_db",
-      "src_db_database",
-      "src_db_deletecard",
-      "src_db_getcards",
-      "src_db_mergecards",
-      "src_db_putcard",
-      "src_db_transaction",
-      "src_domain_practicecard",
-      "src_main_importjson",
-      "src_main_loadcards"
+      "factory_verification_4",
+      "factory_verification_4_accessibility_responsive_behavior_and_visual_review",
+      "factory_verification_4_clean_checkout_and_repository_gates",
+      "factory_verification_4_defects",
+      "factory_verification_4_p1_imported_attempt_history_is_interpreted_as_active_html",
+      "factory_verification_4_p1_the_advertised_9_purchase_flow_is_unavailable",
+      "factory_verification_4_p2_live_security_and_cache_response_policy_is_incomplete",
+      "factory_verification_4_p2_visible_interactive_targets_miss_the_44_44px_contract",
+      "factory_verification_4_passing_evidence",
+      "factory_verification_4_privacy_pwa_and_live_identity",
+      "factory_verification_4_product_flow_and_recovery",
+      "factory_verification_4_required_before_re_verification",
+      "factory_verification_4_verdict",
+      "factory_verification_4_verification_report_4_fail"
     ],
     "7": [
+      "factory_verification_2",
+      "factory_verification_2_clean_candidate_and_quality_gates",
+      "factory_verification_2_fresh_evidence_that_passed",
+      "factory_verification_2_functional_accessibility_privacy_and_pwa_checks",
+      "factory_verification_2_live_identity_and_response_evidence",
+      "factory_verification_2_other_defects",
+      "factory_verification_2_p1_imported_attempt_history_is_stored_xss",
+      "factory_verification_2_p2_production_response_policy_and_cache_policy_are_incomplete",
+      "factory_verification_2_p2_visible_interactive_targets_are_below_the_44px_minimum",
+      "factory_verification_2_release_blocking_defect",
+      "factory_verification_2_required_before_re_verification",
+      "factory_verification_2_verdict",
+      "factory_verification_2_verification_report_2_fail"
+    ],
+    "8": [
+      "factory_verification_6",
+      "factory_verification_6_accessibility_responsive_behavior_and_visual_review",
+      "factory_verification_6_candidate_and_deployment_identity",
+      "factory_verification_6_clean_quality_gates",
+      "factory_verification_6_defects",
+      "factory_verification_6_p2_fresh_mobile_lighthouse_performance_misses_the_90_gate",
+      "factory_verification_6_p2_import_backup_has_no_visible_keyboard_focus_indicator",
+      "factory_verification_6_product_workflow_and_recovery_evidence",
+      "factory_verification_6_purchase_boundary",
+      "factory_verification_6_pwa_privacy_and_response_policy",
+      "factory_verification_6_required_before_re_verification",
+      "factory_verification_6_verdict",
+      "factory_verification_6_verification_report_6_fail"
+    ],
+    "9": [
+      "factory_verification_5",
+      "factory_verification_5_accessibility_responsive_ui_privacy_and_performance",
+      "factory_verification_5_clean_checkout_and_repository_gates",
+      "factory_verification_5_defects",
+      "factory_verification_5_independent_product_exercise",
+      "factory_verification_5_p1_the_advertised_9_one_time_purchase_cannot_start",
+      "factory_verification_5_p2_space_suppresses_native_activation_for_focused_buttons",
+      "factory_verification_5_p2_two_links_remain_below_the_44_44px_target_contract",
+      "factory_verification_5_pwa_response_policy_and_live_identity",
+      "factory_verification_5_required_before_re_verification",
+      "factory_verification_5_verdict",
+      "factory_verification_5_verification_report_5_fail"
+    ],
+    "10": [
+      "factory_verification",
+      "factory_verification_blocking_defects",
+      "factory_verification_p0_live_deployment_is_unavailable_and_cannot_match_the_candidate",
+      "factory_verification_p1_json_import_permits_stored_xss_and_arbitrary_outbound_requests",
+      "factory_verification_p2_several_visible_touch_targets_miss_the_44px_acceptance_requirement",
+      "factory_verification_product_accessibility_privacy_and_pwa_evidence",
+      "factory_verification_reproducible_build_and_automated_checks",
+      "factory_verification_required_before_re_verification",
+      "factory_verification_verdict",
+      "factory_verification_verification_report_fail",
+      "factory_verification_what_passed_locally"
+    ],
+    "11": [
+      "factory_verification_7",
+      "factory_verification_7_accessibility_keyboard_responsive_and_visual_qa",
+      "factory_verification_7_candidate_and_deployment_identity",
+      "factory_verification_7_clean_quality_gates",
+      "factory_verification_7_end_to_end_product_and_recovery_checks",
+      "factory_verification_7_performance_and_bundle_budgets",
+      "factory_verification_7_pwa_privacy_and_response_policy",
+      "factory_verification_7_scope_notes",
+      "factory_verification_7_verdict",
+      "factory_verification_7_verification_report_7_pass"
+    ],
+    "12": [
+      "src_db",
+      "src_db_clearcards",
+      "src_db_database",
+      "src_db_databasename",
+      "src_db_deletecard",
+      "src_db_deletestorage",
+      "src_db_storagescope",
+      "src_db_transaction",
+      "src_domain_practicecard",
+      "src_main_startforreal"
+    ],
+    "13": [
       "src_audio",
       "src_audio_metronome",
       "src_audio_metronome_onbeat",
@@ -139,7 +286,16 @@
       "src_audio_metronome_stop",
       "src_audio_metronome_update"
     ],
-    "8": [
+    "14": [
+      "factory_copy_audit",
+      "factory_copy_audit_first_screen",
+      "factory_copy_audit_offline_fallback",
+      "factory_copy_audit_product_sections_and_states",
+      "factory_copy_audit_sample_route",
+      "factory_copy_audit_tempo_earcheck_copy_audit",
+      "factory_copy_audit_terminology"
+    ],
+    "15": [
       "scripts_postbuild",
       "scripts_postbuild_compiled",
       "scripts_postbuild_hash",
@@ -148,70 +304,118 @@
       "scripts_postbuild_precache",
       "scripts_postbuild_workerpath"
     ],
-    "9": [
-      "src_main_clearbeat",
-      "src_main_keyboardshortcuts",
-      "src_main_setbpm",
-      "src_main_setstatus",
-      "src_main_showbeat",
-      "src_main_taptempo",
-      "src_main_togglemetronome"
+    "16": [
+      "tests_claims_spec",
+      "tests_claims_spec_addcard",
+      "tests_claims_spec_opendemo",
+      "tests_claims_spec_testaudiocontext",
+      "tests_claims_spec_testaudiocontext_creategain",
+      "tests_claims_spec_testaudiocontext_createoscillator",
+      "tests_claims_spec_testaudiocontext_resume"
     ],
-    "10": [
+    "17": [
+      "factory_demo",
+      "factory_demo_entry_points",
+      "factory_demo_included_sample",
+      "factory_demo_isolation_and_reset",
+      "factory_demo_tempo_earcheck_sample_notebook",
+      "factory_demo_verification"
+    ],
+    "18": [
+      "agents",
+      "agents_definition_of_done_a_worker_may_not_claim_completion_without_all_of_these",
+      "agents_tempo_earcheck_tempo_earcheck_factory_product_contract",
+      "agents_working_rules"
+    ],
+    "19": [
+      "scripts_verify_live",
+      "scripts_verify_live_disturl",
+      "scripts_verify_live_hostedcheckout",
+      "scripts_verify_live_publicfiles"
+    ],
+    "20": [
+      "src_claims_registry_test",
+      "src_claims_registry_test_claim",
+      "src_claims_registry_test_claims",
+      "src_claims_registry_test_claimtests"
+    ],
+    "21": [
       "src_release_policy_test",
       "src_release_policy_test_config",
       "src_release_policy_test_route",
       "src_release_policy_test_staticconfig"
     ],
-    "11": [
-      "scripts_verify_live",
-      "scripts_verify_live_hostedcheckout"
+    "22": [
+      "tests_app_spec",
+      "tests_app_spec_constructor"
     ],
-    "12": [
+    "23": [
       "playwright_config"
     ],
-    "13": [
+    "24": [
       "public_sw"
     ],
-    "14": [
-      "tests_app_spec"
-    ],
-    "15": [
+    "25": [
       "vite_config"
     ]
   },
   "cohesion": {
-    "0": 0.12315270935960591,
-    "1": 0.1111111111111111,
-    "2": 0.20833333333333334,
-    "3": 0.3333333333333333,
-    "4": 0.14285714285714285,
-    "5": 0.15384615384615385,
-    "6": 0.35555555555555557,
-    "7": 0.35714285714285715,
-    "8": 0.2857142857142857,
-    "9": 0.42857142857142855,
-    "10": 0.5,
-    "11": 1.0,
-    "12": 1.0,
-    "13": 1.0,
-    "14": 1.0,
-    "15": 1.0
+    "0": 0.08743169398907104,
+    "1": 0.07142857142857142,
+    "2": 0.08,
+    "3": 0.1111111111111111,
+    "4": 0.26143790849673204,
+    "5": 0.11764705882352941,
+    "6": 0.14285714285714285,
+    "7": 0.15384615384615385,
+    "8": 0.15384615384615385,
+    "9": 0.16666666666666666,
+    "10": 0.18181818181818182,
+    "11": 0.2,
+    "12": 0.3333333333333333,
+    "13": 0.35714285714285715,
+    "14": 0.2857142857142857,
+    "15": 0.2857142857142857,
+    "16": 0.2857142857142857,
+    "17": 0.3333333333333333,
+    "18": 0.5,
+    "19": 0.5,
+    "20": 0.5,
+    "21": 0.5,
+    "22": 1.0,
+    "23": 1.0,
+    "24": 1.0,
+    "25": 1.0
   },
   "gods": [
     {
       "id": "src_main_bindhomeevents",
       "label": "bindHomeEvents()",
-      "degree": 17
+      "degree": 20
     },
     {
       "id": "src_main_handlecardaction",
       "label": "handleCardAction()",
-      "degree": 12
+      "degree": 13
     },
     {
       "id": "src_main_homepage",
       "label": "homePage()",
+      "degree": 11
+    },
+    {
+      "id": "src_main_resetdemo",
+      "label": "resetDemo()",
+      "degree": 11
+    },
+    {
+      "id": "factory_verification_6_verification_report_6_fail",
+      "label": "Verification report 6 \u2014 FAIL",
+      "degree": 10
+    },
+    {
+      "id": "package_scripts",
+      "label": "scripts",
       "degree": 10
     },
     {
@@ -225,57 +429,20 @@
       "degree": 9
     },
     {
-      "id": "package_scripts",
-      "label": "scripts",
+      "id": "factory_verification_7_verification_report_7_pass",
+      "label": "Verification report 7 \u2014 PASS",
       "degree": 9
     },
     {
-      "id": "src_audio_metronome",
-      "label": "Metronome",
-      "degree": 8
-    },
-    {
-      "id": "src_main_handlecardsubmit",
-      "label": "handleCardSubmit()",
-      "degree": 8
-    },
-    {
-      "id": "src_main_showtoast",
-      "label": "showToast()",
-      "degree": 8
-    },
-    {
-      "id": "src_domain_clampbpm",
-      "label": "clampBpm()",
-      "degree": 8
+      "id": "src_db_putcard",
+      "label": "putCard()",
+      "degree": 9
     }
   ],
   "surprises": [
     {
-      "source": "handleCardAction()",
-      "target": "deleteCard()",
-      "source_files": [
-        "src/main.ts",
-        "src/db.ts"
-      ],
-      "confidence": "EXTRACTED",
-      "relation": "calls",
-      "why": "bridges separate communities"
-    },
-    {
-      "source": "handleCardAction()",
-      "target": "putCard()",
-      "source_files": [
-        "src/main.ts",
-        "src/db.ts"
-      ],
-      "confidence": "EXTRACTED",
-      "relation": "calls",
-      "why": "bridges separate communities"
-    },
-    {
-      "source": "handleCardAction()",
-      "target": "recordAttempt()",
+      "source": "tapTempo()",
+      "target": "bpmFromTaps()",
       "source_files": [
         "src/main.ts",
         "src/domain.ts"
@@ -286,10 +453,21 @@
     },
     {
       "source": "handleCardSubmit()",
-      "target": "putCard()",
+      "target": "clampBpm()",
       "source_files": [
         "src/main.ts",
-        "src/db.ts"
+        "src/domain.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "setBpm()",
+      "target": "clampBpm()",
+      "source_files": [
+        "src/main.ts",
+        "src/domain.ts"
       ],
       "confidence": "EXTRACTED",
       "relation": "calls",
@@ -297,7 +475,18 @@
     },
     {
       "source": "handleCardSubmit()",
-      "target": "clampBpm()",
+      "target": "createCard()",
+      "source_files": [
+        "src/main.ts",
+        "src/domain.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "handleCardAction()",
+      "target": "recordAttempt()",
       "source_files": [
         "src/main.ts",
         "src/domain.ts"
