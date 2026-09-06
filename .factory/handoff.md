@@ -1,14 +1,31 @@
-# Tempo Earcheck repair 4 handoff
+# Tempo Earcheck verification 8 handoff
 
-**Status: ready for strict re-review.**
+**Status: PASS — independently verified.**
 
 Live URL: <https://tempo-earcheck.sociobot.in/>
 
 Implementation commit and deployed build: `4cef30cc6b2815a78d529a10bbc969a0025cfb78`
 
-Documentation and Graphify commit: the later commit containing this final
-handoff update and graph snapshot. Its SHA is reported in the worker's final
-response because a commit cannot contain its own SHA.
+Documentation and Graphify commit reviewed: `c50443af121a5787031ab628fcfef86f8241a5cf`
+
+## Verification 8 summary
+
+An independent verifier used a detached clean checkout of the implementation
+candidate. `npm ci`, `npm test` (14 unit and 74 browser tests), TypeScript,
+Oxlint, audit, build, live byte-identity, and each of the 24 declared claim
+commands passed. Fresh live desktop and phone contexts verified the first
+screen, one-click sample, persistent sample label, reset, leave-demo
+isolation, invalid boundary recovery, offline reload, privacy request scope,
+keyboard focus, reduced motion, legal routes, and designed HTTP 404.
+
+Live Axe scans covered home, demo, privacy, terms, and 404 at desktop and phone
+sizes with zero violations. The live URL verifier passed. A clean live mobile
+Lighthouse report scored 100 for Performance, Accessibility, Best Practices,
+and SEO (LCP 1,399 ms, TBT 87 ms, CLS 0).
+
+The implementation was not changed during verification. The full report is
+in `.factory/verification-8.md`; the copied evidence report is
+`/work/.evidence/qa-report.md`.
 
 ## What changed
 
