@@ -1,73 +1,76 @@
-# Tempo Earcheck verification 7 handoff
+# Tempo Earcheck review 1 handoff
 
-**Status: PASS — candidate and live deployment verified.**
+**Status: FAIL — 7 findings and 23 untested public claims.**
 
-**Candidate:** `43f43f768ec308cb79727bff4a2ac42279d10795`
+Review report: `.factory/review-1.md`
 
-**Live URL:** <https://tempo-earcheck.sociobot.in/>
+Implementation reviewed: `7036ed4b61a2f15124ce612692ce2166c628edde`
 
-**Full evidence:** `.factory/verification-7.md`
+Documentation reviewed: `8b161a9a18f824a3ee0431ac8885db550d28a90e`
 
-## Result
+Live URL: <https://tempo-earcheck.sociobot.in/>
 
-No P0, P1, P2, or P3 product defect was found. Fresh evidence resolves the
-possible deployment-only concern: all 18 deployed public artifacts are
-byte-identical to the clean candidate build, the live PWA works online and
-offline, and the Sociobot checkout opens the registered hosted Dodo offer for
-Notebook edition at $9.
+## What was done
 
-## Verification summary
+This was a report-only review. Product code was not modified. Fresh desktop
+and phone browsers covered the first screen, normal use, invalid and boundary
+input, persistence, exports, delete/Undo, keyboard focus, reduced motion,
+accessibility, privacy requests, legal routes, offline reload, links, metadata,
+and the missing-route response. Earlier findings were checked again.
 
-- Clean detached checkout at the exact candidate; Node 22.23.2, npm 10.9.8,
-  Playwright 1.58.2.
-- `npm ci --include=dev`: passed, 56 packages, zero vulnerabilities.
-- `npm test`: 11/11 Vitest passed; 23 Playwright passed and one expected
-  desktop skip for a mobile-only assertion.
-- `npx tsc --noEmit`: passed.
-- Supplemental Oxlint 1.48.0: zero warnings/errors across 11 files.
-- `npm audit --audit-level=high`: zero vulnerabilities.
-- `npm run build`: passed and produced `dist/`.
-- `npm run test:live`: passed candidate/live HTML identity and the hosted $9
-  checkout check.
+The live deployment matches all 18 files in a clean build of the last product
+implementation. The product's normal tempo and practice-card flow works, but
+it does not provide the required isolated sample demo. The claims registry and
+tagged claim tests are also absent.
 
-Independent desktop and 390 px mobile QA covered normal, boundary, invalid, and
-recovery paths for tempo, meter, Web Audio controls, card creation/history,
-free limits, persistence, JSON/CSV ownership, import merging, delete/Undo, and
-license caching/failure. Offline reload and a controlled service-worker update
-both preserved IndexedDB data.
+## Verification
 
-Local and live Home, Privacy, and Terms produced 12 clean Axe scans with no
-violations, no console/page errors, no overflow, correct landmarks, visible
-focus, 44 px targets, and reduced-motion behavior. Fresh browser workflows made
-only same-origin requests. Production security and caching headers passed.
-
-Lighthouse 12.8.2 default simulated-mobile results:
-
-| Target | Performance | A11y | Best practices | SEO | LCP | CLS |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Local median of 3 | 95 | 100 | 100 | 100 | 1.81s median | 0 |
-| Live | 98 | 100 | 100 | 100 | 1.42s | 0 |
-
-The three local performance scores were 88, 95, and 99; the median passes the
-90 gate. JS is 30.97 kB, CSS 15.56 kB, no fonts ship, and the largest hero image
-is 89.65 kB.
-
-## Run / verify
+From a detached clean checkout:
 
 ```sh
-npm ci
+npm ci --include=dev
 npm test
 npx tsc --noEmit
 npm audit --audit-level=high
 npm run build
-npm run preview
 npm run test:live
 ```
 
-## Known gaps
+All commands passed. `npm test` reported 11 unit tests, 23 browser passes, and
+one intended project skip. The build produced `dist/` with 30.97 kB JS and
+15.56 kB CSS before gzip.
 
-No release blocker is known. Verification did not submit a real payment or
-refund and did not obtain a provider-issued license; the hosted checkout and
-controlled valid/invalid license paths cover the allowed boundary. Subjective
-speaker loudness cannot be judged in headless automation, though Web Audio
-state, safe defaults, and the absence of microphone use were verified.
+Fresh live Lighthouse scored 100 for Performance, Accessibility, Best
+Practices, and SEO. LCP was 1.4 s, TBT 60 ms, and CLS 0. Playwright Axe found no
+violations in the checked desktop and phone routes. The factory URL check found
+no console errors.
+
+## Findings to address
+
+1. Add a one-click, separately stored sample demo with its persistent label,
+   Reset demo, Start for real, and `.factory/demo.md`.
+2. Add `.factory/claims.json` and exactly one tagged demo-based test for each of
+   the 23 public claims listed in the review.
+3. Replace the unprovable “hearing-safe level” claim with measurable copy.
+4. Rewrite the first screen and headings in plain words; name the audience,
+   action result, and three facts; add `.factory/copy-audit.md`.
+5. Complete the required How it works, privacy/non-goal, header, footer, and
+   sitemap structure.
+6. Add job-naming route titles, Open Graph/Twitter metadata, social image, and
+   an Apple touch icon link.
+7. Add a designed missing-page route that deliberately returns HTTP 404.
+
+## Evidence
+
+The primary report is also copied to `/work/.evidence/qa-report.md`.
+Machine-readable status is `/work/.evidence/qa-result.json`. Supporting browser,
+build-identity, Lighthouse, and screenshot evidence is in `/work/.evidence/`.
+
+## Known limits
+
+No real payment or refund was submitted. The live hosted offer and controlled
+license behaviors cover the allowed boundary. Subjective speaker loudness was
+not judged; that limitation is why the “hearing-safe level” wording is a
+finding. This static PWA has no product backend, tenant isolation, server
+restart persistence, health endpoint, rate limit, CLI, library, or desktop
+artifact to test.
