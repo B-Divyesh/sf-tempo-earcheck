@@ -1,9 +1,9 @@
 {
   "name": "Tempo Earcheck",
   "short_name": "Earcheck",
-  "description": "Hear, tap, and keep a defensible practice tempo.",
+  "description": "Hear, test, and record practice tempos with a local practice notebook.",
   "id": "/",
-  "start_url": "/?v=1",
+  "start_url": "/?v=2",
   "scope": "/",
   "display": "standalone",
   "background_color": "#f2efe6",

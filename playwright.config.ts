@@ -11,7 +11,11 @@ export default defineConfig({
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'mobile', use: { ...devices['Pixel 5'], viewport: { width: 390, height: 844 } } }
+    {
+      name: 'mobile',
+      testIgnore: /claims\.spec\.ts/,
+      use: { ...devices['Pixel 5'], viewport: { width: 390, height: 844 } }
+    }
   ],
   webServer: {
     command: 'npm run build && npm run preview -- --port 4173',

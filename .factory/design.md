@@ -39,6 +39,8 @@ Only state-changing motion is used: a 180ms beat-cell fill, a 160ms button press
 
 Hero illustration: an original still life of a mechanical metronome, annotated rehearsal cards, and pencil rendered as stark black editorial engraving on warm paper. It clarifies the product’s bridge between listening and recording. Generated with the factory image model (`factory-image`, Azure OpenAI), 2026-08-27; original for this product.
 
+The social preview at `public/assets/tempo-earcheck-social.jpg` is a 1200 × 630 center crop of that original illustration. The Apple touch icon is a local 180px export of the hand-authored product icon.
+
 Prompt sheet: “Editorial broadsheet still life, top-down three-quarter view of a classic mechanical metronome beside a small stack of blank rehearsal index cards and a red proofreading pencil, black woodcut and stipple ink on warm ivory uncoated music paper, restrained vermilion accents, hard directional studio light, generous paper negative space, authentic print registration texture, sophisticated 1930s newspaper engraving, no people, no hands, no musical notation, no readable text, no logos, no watermark, no gradients, no glossy 3D render.”
 
 App icons are hand-authored SVG registration-mark/metronome monograms, exported locally to PNG. Generated-image disclosure appears in the footer. No copyrighted or third-party assets are included.

@@ -1,54 +1,79 @@
 # Tempo Earcheck
 
-Tempo Earcheck is an offline rehearsal tempo desk for instrumentalists. Tap or set a tempo, audition an accented meter with a hearing-safe Web Audio click, and turn the result into a practice card that remembers where you began, what passed, and what to try next.
+Tempo Earcheck helps instrumentalists hear, test, and record practice tempos. It joins an accented click with a small local practice notebook.
 
 Live product: [tempo-earcheck.sociobot.in](https://tempo-earcheck.sociobot.in)
 
+One-click sample: [tempo-earcheck.sociobot.in/demo](https://tempo-earcheck.sociobot.in/demo)
+
 ## What it includes
 
-- Tap tempo with median interval filtering, direct BPM entry, and 30–240 BPM range
-- Accented 2/4 through 12/4 meter click, synthesized locally without audio files
-- Named practice cards with starting, passed, and next BPM plus difficulty notes
-- Timestamped “passed” and “needs work” history
-- IndexedDB persistence and last-write-wins JSON import
-- JSON backup and CSV summary export in the free edition
-- Installable PWA shell that reloads and runs offline
-- Keyboard controls: Space taps, M starts/stops the click, Escape closes dialogs
-- Privacy and terms pages at `/privacy` and `/terms`
+- Tap tempo and direct input from 30–240 BPM
+- Accented click meters from 2/4 through 12/4
+- Click sounds made with Web Audio, without audio files or microphone access
+- Practice cards with names, starting tempos, passed tempos, next tempos, meters, and notes
+- Dated passed and needs-work history
+- Local browser storage that persists across reloads
+- JSON backup, JSON import, and CSV summary export
+- Keyboard controls: Space taps, M starts or stops the click, and Escape closes dialogs
+- An installable app shell that works offline after the first visit
 
-The free edition holds five practice cards and three visible history entries per card. The optional $9 one-time Notebook edition unlocks unlimited cards, full on-screen history, and custom 1–24 BPM increments. Buying and verification use only the Sociobot billing API; no payment provider is embedded.
+The free edition holds five cards. It shows three history entries per card, while JSON exports retain complete history.
 
-## Develop
+Notebook edition costs $9 once. It adds unlimited cards, complete on-screen history, and 1–24 BPM steps.
 
-Requires Node.js 22 or newer.
+Purchases use the Sociobot hosted checkout. No payment provider is embedded in this app.
+
+## Try the separate sample notebook
+
+Open `/demo` or choose **Try it with sample data** on the home page. The sample contains three realistic practice cards.
+
+The demo uses `demo:tempo-earcheck` IndexedDB storage and `demo:` localStorage keys. It never reads or writes the real notebook.
+
+Choose **Reset demo** to restore the sample. Choose **Start for real** to delete demo changes and open the real notebook.
+
+## Clean setup
+
+Node.js 22 or newer is required. Playwright 1.58.2 is pinned in `package.json`.
 
 ```sh
-npm install
+npm ci --include=dev
 npx playwright install chromium
 npm run dev
 ```
 
-Open `http://localhost:5173`. The development server serves the app, although a production build is required to exercise the compiled offline precache manifest.
+Open `http://localhost:5173`. Use a production preview when checking the service worker.
 
 ## Test and build
 
 ```sh
-npm test       # unit + Chromium desktop/mobile + axe + offline checks
-npm run build  # reproducible static output in ./dist
+npm test
+npm run test:claims
+npx tsc --noEmit
+npm audit --audit-level=high
+npm run build
 npm run preview
 ```
 
-After deployment, `npm run test:live` confirms that the live HTML matches the
-local build and that the $9 purchase action opens the registered hosted
-checkout. It never submits payment details.
+Every public promise is listed in `.factory/claims.json`. Each entry includes its exact tagged test command and clean sandbox.
 
-The static deployment root is `dist/`; `dist/index.html` is the main entry. The build also emits direct static entries for `/privacy/` and `/terms/`. `scripts/postbuild.mjs` discovers hashed assets and inserts them into the versioned service-worker precache.
+After deployment, `npm run test:live` compares live HTML with `dist/index.html`. It also checks the registered $9 hosted offer without paying.
+
+The deployment root is `dist/`. Static routes include `/demo`, `/privacy`, `/terms`, and the designed `404.html` response.
 
 ## Data and privacy
 
-Practice data never leaves the browser. Cards are stored in IndexedDB; settings and an optional license token are stored in localStorage. No microphone access, analytics, third-party fonts, or runtime CDN scripts are used. License verification contacts `https://api.sociobot.in` at most once per day after a cached unlock.
+Practice cards stay in IndexedDB. Settings and an optional license token stay in namespaced localStorage.
 
-See [.factory/design.md](.factory/design.md) for the visual system and original image provenance, and [.factory/handoff.md](.factory/handoff.md) for verification results.
+The app makes no analytics or advertising requests. It loads no third-party fonts, scripts, or audio files.
+
+License verification uses `https://api.sociobot.in` after a purchase or restore. A cached license is checked at most once each day.
+
+See the [privacy page](https://tempo-earcheck.sociobot.in/privacy) and [terms](https://tempo-earcheck.sociobot.in/terms).
+
+## Design and handoff
+
+See [.factory/design.md](.factory/design.md) for the visual system and image provenance. See [.factory/handoff.md](.factory/handoff.md) for verification details.
 
 ## License
 

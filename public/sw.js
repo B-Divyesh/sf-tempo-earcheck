@@ -29,11 +29,6 @@ self.addEventListener('fetch', (event) => {
 
   if (event.request.mode === 'navigate') {
     event.respondWith(fetch(event.request)
-      .then((response) => {
-        const copy = response.clone();
-        caches.open(SHELL_CACHE).then((cache) => cache.put('/', copy));
-        return response;
-      })
       .catch(async () => (await caches.match('/')) || (await caches.match('/offline.html'))));
     return;
   }

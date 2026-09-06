@@ -1,6 +1,6 @@
 import './styles.css';
 import { Metronome } from './audio';
-import { deleteCard, getCards, mergeCards, putCard } from './db';
+import { clearCards, deleteCard, deleteStorage, getCards, mergeCards, putCard, type StorageScope } from './db';
 import {
   bpmFromTaps,
   cardsToCsv,
@@ -15,14 +15,73 @@ import {
 const app = document.querySelector<HTMLDivElement>('#app')!;
 const meterOptions = [2, 3, 4, 5, 6, 7, 9, 12];
 const freeCardLimit = 5;
-const licenseKey = 'sb_license:tempo-earcheck';
-const verdictKey = 'sb_license_verdict:tempo-earcheck';
+const demoMode = /^\/demo\/?$/.test(location.pathname) || new URLSearchParams(location.search).get('demo') === '1';
+const storageScope: StorageScope = demoMode ? 'demo' : 'real';
+const storagePrefix = demoMode ? 'demo:' : '';
+const settingKey = (name: string): string => `${storagePrefix}tempo:${name}`;
+const licenseKey = `${storagePrefix}sb_license:tempo-earcheck`;
+const verdictKey = `${storagePrefix}sb_license_verdict:tempo-earcheck`;
 const billingBase = 'https://api.sociobot.in/api/v1/products/tempo-earcheck';
 const checkoutUrl = `${billingBase}/checkout`;
+const buildId = '1.1.0';
+const socialImage = 'https://tempo-earcheck.sociobot.in/assets/tempo-earcheck-social.jpg';
 
-let bpm = clampBpm(Number(localStorage.getItem('tempo:bpm')) || 96);
-let meter = Math.min(12, Math.max(2, Number(localStorage.getItem('tempo:meter')) || 4));
-let volume = Math.min(0.16, Math.max(0.02, Number(localStorage.getItem('tempo:volume')) || 0.08));
+const sampleCards: PracticeCard[] = [
+  {
+    id: 'sample-cello-shifts',
+    name: 'Cello shift study',
+    meter: 4,
+    startBpm: 72,
+    passedBpm: 80,
+    nextBpm: 84,
+    step: 4,
+    note: 'Third-position shift stays clean when the thumb releases early.',
+    createdAt: '2026-08-28T18:10:00.000Z',
+    updatedAt: '2026-09-04T18:42:00.000Z',
+    history: [
+      { id: 'cello-5', at: '2026-09-04T18:42:00.000Z', bpm: 80, outcome: 'passed' },
+      { id: 'cello-4', at: '2026-09-03T18:30:00.000Z', bpm: 80, outcome: 'needs-work' },
+      { id: 'cello-3', at: '2026-09-01T18:24:00.000Z', bpm: 76, outcome: 'passed' },
+      { id: 'cello-2', at: '2026-08-30T10:05:00.000Z', bpm: 72, outcome: 'passed' },
+      { id: 'cello-1', at: '2026-08-28T18:12:00.000Z', bpm: 72, outcome: 'needs-work' }
+    ]
+  },
+  {
+    id: 'sample-brass-chorale',
+    name: 'Brass chorale entrance',
+    meter: 3,
+    startBpm: 60,
+    passedBpm: 64,
+    nextBpm: 66,
+    step: 2,
+    note: 'Breathe together before beat one; keep the release short.',
+    createdAt: '2026-08-30T09:00:00.000Z',
+    updatedAt: '2026-09-03T19:20:00.000Z',
+    history: [
+      { id: 'brass-2', at: '2026-09-03T19:20:00.000Z', bpm: 64, outcome: 'passed' },
+      { id: 'brass-1', at: '2026-08-30T09:10:00.000Z', bpm: 60, outcome: 'passed' }
+    ]
+  },
+  {
+    id: 'sample-string-crossing',
+    name: 'Violin string crossing',
+    meter: 6,
+    startBpm: 108,
+    passedBpm: null,
+    nextBpm: 108,
+    step: 4,
+    note: 'Keep the bow close to both strings before raising the tempo.',
+    createdAt: '2026-09-02T17:15:00.000Z',
+    updatedAt: '2026-09-02T17:24:00.000Z',
+    history: [
+      { id: 'violin-1', at: '2026-09-02T17:24:00.000Z', bpm: 108, outcome: 'needs-work' }
+    ]
+  }
+];
+
+let bpm = clampBpm(Number(localStorage.getItem(settingKey('bpm'))) || 96);
+let meter = Math.min(12, Math.max(2, Number(localStorage.getItem(settingKey('meter'))) || 4));
+let volume = Math.min(0.16, Math.max(0.02, Number(localStorage.getItem(settingKey('volume'))) || 0.08));
 let taps: number[] = [];
 let cards: PracticeCard[] = [];
 let returningFocus: HTMLElement | null = null;
@@ -48,72 +107,139 @@ function cachedLicenseIsValid(): boolean {
 function masthead(): string {
   return `<header class="masthead">
     <a class="wordmark" href="/" aria-label="Tempo Earcheck home">
-      <span class="edition">No. 01 · rehearsal desk</span>
+      <span class="edition">Practice tempo notebook</span>
       <span>Tempo Earcheck</span>
     </a>
     <nav aria-label="Primary">
-      <a href="/#earcheck">Earcheck</a>
+      <a href="/demo">Demo</a>
+      <a href="/#earcheck">Tempo</a>
       <a href="/#notebook">Notebook</a>
-      <a href="/#own-your-data">Your data</a>
+      <a href="/privacy">Privacy</a>
     </nav>
-    <span class="network-state" id="network-state">${navigator.onLine ? 'Ready offline' : 'Offline · all local'}</span>
+    <span class="network-state" id="network-state">${navigator.onLine ? 'Online' : 'Offline'}</span>
   </header>`;
+}
+
+function setPageMetadata(title: string, description: string, path: string, noIndex = false): void {
+  document.title = title;
+  const canonicalUrl = `https://tempo-earcheck.sociobot.in${path}`;
+  const setMeta = (selector: string, content: string): void => {
+    document.querySelector<HTMLMetaElement>(selector)?.setAttribute('content', content);
+  };
+  document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.setAttribute('href', canonicalUrl);
+  setMeta('meta[name="description"]', description);
+  setMeta('meta[property="og:title"]', title);
+  setMeta('meta[property="og:description"]', description);
+  setMeta('meta[property="og:url"]', canonicalUrl);
+  setMeta('meta[property="og:image"]', socialImage);
+  setMeta('meta[name="twitter:title"]', title);
+  setMeta('meta[name="twitter:description"]', description);
+  setMeta('meta[name="twitter:image"]', socialImage);
+  let robots = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
+  if (noIndex && !robots) {
+    robots = document.createElement('meta');
+    robots.name = 'robots';
+    document.head.append(robots);
+  }
+  if (robots) robots.content = noIndex ? 'noindex' : 'index,follow';
 }
 
 function footer(): string {
   return `<footer>
-    <p><strong>Tempo Earcheck</strong> · Your rehearsal data stays on this device.</p>
+    <p><strong>Tempo Earcheck</strong> · Hear, test, and record a practice tempo.</p>
     <nav aria-label="Legal"><a href="/privacy">Privacy</a><a href="/terms">Terms</a></nav>
-    <p class="generated-note">Original illustration generated for this product with the factory image model.</p>
+    <p class="factory-note"><a href="https://sociobot.in" aria-label="Built by Param Factory; opens another site">Built by Param Factory ↗</a> · Build ${buildId}</p>
+    <p class="generated-note">The factory image model made the original illustration for this product.</p>
   </footer>`;
 }
 
 function legalPage(kind: 'privacy' | 'terms'): void {
   const isPrivacy = kind === 'privacy';
-  document.title = `${isPrivacy ? 'Privacy' : 'Terms'} — Tempo Earcheck`;
+  setPageMetadata(
+    `${isPrivacy ? 'Privacy' : 'Terms'} — Tempo Earcheck`,
+    isPrivacy ? 'How Tempo Earcheck stores practice cards and handles license checks.' : 'Terms for the free and paid Tempo Earcheck practice notebook.',
+    isPrivacy ? '/privacy' : '/terms'
+  );
   app.innerHTML = `${masthead()}<main id="main" class="legal-page">
-    <p class="kicker">Tempo Earcheck · policy desk</p>
-    <h1>${isPrivacy ? 'Privacy, in plain time.' : 'Terms of use.'}</h1>
-    ${isPrivacy ? `<p class="lede">Your practice notebook belongs to you. Tempo Earcheck works without an account and does not send your cards, notes, taps, or audio anywhere.</p>
+    <p class="kicker">Tempo Earcheck policy</p>
+    <h1>${isPrivacy ? 'How Tempo Earcheck handles your data' : 'Terms for using Tempo Earcheck'}</h1>
+    ${isPrivacy ? `<p class="lede">You can use your practice notebook without an account. Practice cards, notes, and taps stay in this browser.</p>
       <h2>What stays on your device</h2><p>Practice cards and result history are stored in your browser’s IndexedDB. Tempo, meter, volume, and any license token are stored locally. You can export or erase cards at any time.</p>
       <h2>What crosses the network</h2><p>The app makes no analytics or advertising requests. If you buy or restore Notebook edition, your browser contacts the Sociobot billing API to open checkout and verify the license. Sociobot/Dodo is the merchant of record and handles payment information; Tempo Earcheck never receives card details.</p>
       <h2>Microphone and audio</h2><p>No microphone permission is requested. Click sounds are synthesized on your device with Web Audio and are not recorded.</p>
-      <h2>Contact</h2><p>Questions may be sent through <a class="contact-link" href="https://sociobot.in">sociobot.in</a>. Last updated 27 August 2026.</p>`
+      <h2>Contact</h2><p>Send questions through <a class="contact-link" href="https://sociobot.in" aria-label="sociobot.in; opens another site">sociobot.in ↗</a>. Last updated 6 September 2026.</p>`
       : `<p class="lede">Use Tempo Earcheck as a personal tempo and rehearsal notebook. It is a decision aid, not a hearing test or medical device.</p>
       <h2>License</h2><p>The free edition may be used without an account. A $9 one-time purchase unlocks Notebook edition for the purchaser. A valid license may be restored on the purchaser’s devices and can be revoked after a refund or misuse.</p>
-      <h2>Purchases and refunds</h2><p>Sociobot/Dodo is the merchant of record. Checkout, receipts, taxes, and refunds are handled by that service. Refunded licenses are automatically revoked.</p>
-      <h2>Your responsibilities</h2><p>Keep listening levels comfortable, back up important notes with the included export tools, and do not rely on browser storage as your only archival copy. The software is provided “as is” without warranty.</p>
-      <h2>Changes</h2><p>Material changes will be dated here. Last updated 27 August 2026.</p>`}
-    <p><a class="text-link" href="/">← Return to the rehearsal desk</a></p>
+      <h2>Purchases and refunds</h2><p>Sociobot/Dodo is the merchant of record. Checkout, receipts, taxes, and refunds are handled by that service. When it reports a refunded license as revoked, Tempo Earcheck returns to free limits.</p>
+      <h2>Your responsibilities</h2><p>Keep listening levels comfortable. Back up important notes with the included export tools. Do not rely on browser storage as your only archival copy. The software is provided “as is” without warranty.</p>
+      <h2>Changes</h2><p>Material changes will be dated here. Last updated 6 September 2026.</p>`}
+    <p><a class="text-link" href="/">← Return to Tempo Earcheck</a></p>
+  </main>${footer()}`;
+  bindSharedEvents();
+}
+
+function notFoundPage(): void {
+  setPageMetadata('Page not found — Tempo Earcheck', 'This Tempo Earcheck page does not exist.', '/404', true);
+  app.innerHTML = `${masthead()}<main id="main" class="not-found-page">
+    <div class="registration-mark" aria-hidden="true">404</div>
+    <p class="kicker">Page not found</p>
+    <h1>This page does not exist</h1>
+    <p class="lede">The address may be wrong. Return to the tempo tool or open the sample notebook.</p>
+    <div class="not-found-actions"><a class="primary-link" href="/">Open Tempo Earcheck</a><a class="text-link" href="/demo">Try sample data</a></div>
   </main>${footer()}`;
   bindSharedEvents();
 }
 
 function homePage(): void {
-  document.title = 'Tempo Earcheck — hear it, then keep it';
+  setPageMetadata(
+    demoMode ? 'Demo — Tempo Earcheck' : 'Tempo Earcheck — record practice tempos',
+    demoMode ? 'Try Tempo Earcheck with three sample practice cards in a separate local notebook.' : 'Hear, test, and record practice tempos with an accented click and local practice cards.',
+    demoMode ? '/demo' : '/'
+  );
   app.innerHTML = `${masthead()}
+    ${demoMode ? `<aside class="demo-banner" aria-label="Sample notebook controls">
+      <div><strong>Demo — sample data, nothing is saved</strong><span>Changes use a separate sample notebook.</span></div>
+      <div><button id="reset-demo" type="button">Reset demo</button><button id="start-real" type="button">Start for real</button></div>
+    </aside>` : ''}
     <main id="main">
-      <section class="hero" aria-labelledby="page-title">
+      <section class="hero${demoMode ? ' demo-hero' : ''}" aria-labelledby="page-title">
         <div class="hero-copy">
-          <p class="kicker">The rehearsal tempo paper · works offline</p>
-          <h1 id="page-title">Hear the tempo.<br><em>Keep the evidence.</em></h1>
-          <p class="lede">Tap what you mean, audition the accented click, then record the next honest step for the passage—not just another number to forget.</p>
-          <a class="text-link" href="#earcheck">Open today’s tempo desk ↓</a>
+          <p class="kicker">Practice tempo tool and notebook</p>
+          <h1 id="page-title">${demoMode ? 'Try a filled practice tempo notebook' : 'Hear, test, and record practice tempos'}</h1>
+          <p class="lede">${demoMode
+            ? 'Review realistic practice results, change them, then reset the sample without touching your own cards.'
+            : 'For instrumentalists choosing practice or ensemble tempos, this records each result and the next step.'}</p>
+          ${demoMode
+            ? `<a class="primary-link" href="#notebook">Review three practice cards</a><p class="action-note">The sample includes passed tempos, notes, and next steps.</p>`
+            : `<div class="hero-actions"><a class="primary-link" href="/demo">Try it with sample data</a><span>Loads three filled practice cards.</span></div>
+              <a class="text-link" href="#earcheck">Start with an empty notebook</a>`}
+          <ul class="plain-facts" aria-label="Product facts">
+            <li>Works offline after your first visit.</li>
+            <li>Practice cards stay in this browser.</li>
+            <li>Free for five cards; Notebook edition is $9 once.</li>
+          </ul>
         </div>
-        <figure>
+        ${demoMode ? `<section class="sample-preview" aria-label="Sample practice card summary">
+          <p class="preview-label">Sample notebook · 3 cards</p>
+          <ol>
+            <li><strong>Cello shift study</strong><span>Passed 80 · Try 84 BPM</span></li>
+            <li><strong>Brass chorale entrance</strong><span>Passed 64 · Try 66 BPM</span></li>
+            <li><strong>Violin string crossing</strong><span>Needs work · Try 108 BPM</span></li>
+          </ol>
+        </section>` : `<figure>
           <picture>
             <source srcset="/assets/tempo-desk-720.webp 720w, /assets/tempo-desk-1280.webp 1280w" type="image/webp" sizes="(max-width: 760px) 100vw, 48vw" />
             <img src="/assets/tempo-desk-720.jpg" width="720" height="480" alt="Engraved mechanical metronome beside blank rehearsal cards and a red pencil" fetchpriority="high" decoding="async" />
           </picture>
-          <figcaption>Listen first. Write down what happened.</figcaption>
-        </figure>
+          <figcaption>A metronome, practice cards, and a pencil.</figcaption>
+        </figure>`}
       </section>
 
       <section class="tempo-desk" id="earcheck" aria-labelledby="earcheck-title">
-        <div class="section-rule"><p>Desk A · live audition</p><p>30—240 beats per minute</p></div>
+        <div class="section-rule"><p>Tempo controls</p><p>30–240 beats per minute</p></div>
         <div class="desk-grid">
           <div class="tempo-readout">
-            <h2 id="earcheck-title">Your current finding</h2>
+            <h2 id="earcheck-title">Choose and hear a tempo</h2>
             <output id="bpm-output" class="bpm-output" for="bpm-range bpm-number"><strong>${bpm}</strong><span>BPM</span></output>
             <p id="tempo-name" class="tempo-name">${tempoName(bpm)} · ${meter}/4</p>
             <div id="beat-strip" class="beat-strip" aria-label="Meter beats">${beatCells()}</div>
@@ -129,7 +255,7 @@ function homePage(): void {
               <label for="meter">Meter<select id="meter">${meterOptions.map((value) => `<option value="${value}" ${value === meter ? 'selected' : ''}>${value}/4</option>`).join('')}</select></label>
               <label for="volume">Click volume <span id="volume-value">${Math.round(volume / 0.16 * 100)}%</span><input id="volume" class="range" type="range" min="2" max="16" value="${Math.round(volume * 100)}" /></label>
             </div>
-            <p class="safety-note"><span aria-hidden="true">◉</span> Starts at a hearing-safe level. Raise volume gradually.</p>
+            <p class="safety-note"><span aria-hidden="true">◉</span> Click volume starts at 50% of this control. Raise it gradually.</p>
           </div>
           <div class="desk-actions">
             <button class="tap-button" id="tap-button" type="button"><span>Tap tempo</span><kbd>Space</kbd></button>
@@ -142,26 +268,47 @@ function homePage(): void {
 
       <section class="notebook" id="notebook" aria-labelledby="notebook-title">
         <div class="section-heading">
-          <div><p class="kicker">Desk B · practice ledger</p><h2 id="notebook-title">What happens next?</h2></div>
+          <div><p class="kicker">Practice cards</p><h2 id="notebook-title">Record practice results</h2></div>
           <button id="new-card" class="primary-button" type="button">New practice card</button>
         </div>
-        <p class="section-intro">Return later, try the recorded next tempo, and mark the result. That small trail is the reason this is more than a metronome.</p>
+        <p class="section-intro">Return later, try the recorded next tempo, and mark the result. Each card keeps the practice decision.</p>
         <div id="cards-status" role="status" aria-live="polite"></div>
         <div id="cards" class="card-list" aria-busy="true"><div class="loading-state">Opening your local notebook…</div></div>
       </section>
 
       <section class="ownership" id="own-your-data" aria-labelledby="ownership-title">
-        <div><p class="kicker">Desk C · ownership</p><h2 id="ownership-title">A notebook with an exit.</h2><p>Everything is local-first. Keep an independent copy whenever you like; imports merge by the newest edit.</p></div>
+        <div><p class="kicker">Your data</p><h2 id="ownership-title">Export or import your cards</h2><p>Download an independent copy. Imported cards use the most recent edit when their IDs match.</p></div>
         <div class="data-actions">
-          <button id="export-json" type="button">Export backup (.json)</button>
-          <button id="export-csv" type="button">Export summary (.csv)</button>
+          <button id="export-json" type="button" aria-label="Export backup as JSON">Export backup (.json)</button>
+          <button id="export-csv" type="button" aria-label="Export practice summary as CSV">Export summary (.csv)</button>
           <label class="file-button" for="import-file">Import backup<input id="import-file" type="file" accept="application/json,.json" /></label>
         </div>
       </section>
 
+      <section class="how-it-works" aria-labelledby="how-title">
+        <p class="kicker">How it works</p>
+        <h2 id="how-title">Choose, test, and record</h2>
+        <ol>
+          <li><strong>Choose a tempo.</strong><span>Tap the beat or enter 30–240 BPM.</span></li>
+          <li><strong>Test the click.</strong><span>Select a meter and listen for the accented first beat.</span></li>
+          <li><strong>Record the result.</strong><span>Save what passed, what needs work, and what to try next.</span></li>
+        </ol>
+      </section>
+
+      <section class="limits" aria-labelledby="limits-title">
+        <p class="kicker">Scope and privacy</p>
+        <h2 id="limits-title">What Tempo Earcheck does not do</h2>
+        <ul>
+          <li>It does not request microphone access or record your playing.</li>
+          <li>It does not grade performances, host scores, or stream music.</li>
+          <li>It does not send analytics or advertising requests.</li>
+        </ul>
+        <p>Click sounds are made in your browser. Read the <a href="/privacy">privacy details</a>.</p>
+      </section>
+
       <section class="edition-panel" id="edition" aria-labelledby="edition-title">
         <div class="edition-stamp" aria-hidden="true">N<span>∞</span></div>
-        <div><p class="kicker">Optional desk extension</p><h2 id="edition-title">Notebook edition</h2><p><strong>$9 once.</strong> Unlimited cards, the complete on-screen attempt history, and any 1–24 BPM step. The free desk stays useful forever; export, accessibility, and safety are never gated.</p></div>
+        <div><p class="kicker">One-time purchase</p><h2 id="edition-title">Notebook edition</h2><p><strong>$9 once.</strong> Get unlimited cards, complete on-screen history, and any 1–24 BPM step.</p><p>The free edition keeps five cards. Both export formats remain free.</p></div>
         <div class="license-actions" id="license-actions">${licenseMarkup()}</div>
       </section>
     </main>
@@ -182,7 +329,7 @@ function cardDialog(): string {
     <form method="dialog" id="card-form">
       <div class="dialog-head"><div><p class="kicker">Practice decision</p><h2 id="card-dialog-title">Record this trial</h2></div><button class="close-button" type="button" id="close-dialog" aria-label="Close dialog">×</button></div>
       <input type="hidden" id="edit-id" />
-      <label for="card-name">Passage or exercise <span aria-hidden="true">*</span><input id="card-name" maxlength="80" required autocomplete="off" /></label>
+      <label for="card-name">Passage or exercise <span class="required">required</span><input id="card-name" maxlength="80" required autocomplete="off" /></label>
       <div class="form-grid">
         <label for="card-bpm">Starting BPM<input id="card-bpm" type="number" min="30" max="240" required /></label>
         <label for="card-meter">Meter<select id="card-meter">${meterOptions.map((value) => `<option value="${value}">${value}/4</option>`).join('')}</select></label>
@@ -196,15 +343,19 @@ function cardDialog(): string {
 }
 
 function licenseMarkup(): string {
-  if (licensed) return `<p class="license-active"><span aria-hidden="true">✓</span> Notebook edition active</p><p class="muted">Unlimited cards and complete history are unlocked on this device.</p>`;
-  return `<a class="buy-button" href="${checkoutUrl}">Buy Notebook edition · $9</a>
+  if (licensed) return `<p class="license-active"><span aria-hidden="true">✓</span> Notebook edition active</p><p class="muted">Unlimited cards and complete history are available on this device.</p>`;
+  return `<a class="buy-button" href="${checkoutUrl}">Buy Notebook edition · $9</a><p class="external-note">Hosted checkout opens another site.</p>
     <details><summary>Have a license? Restore it</summary><form id="license-form"><label for="license-token">License token<input id="license-token" type="text" autocomplete="off" spellcheck="false" /></label><button type="submit" aria-label="Verify license">Verify license</button></form></details>
     <p class="license-notice" id="license-notice" role="status">${escapeHtml(licenseNotice)}</p>`;
 }
 
 async function loadCards(): Promise<void> {
   try {
-    cards = await getCards();
+    cards = await getCards(storageScope);
+    if (demoMode && cards.length === 0) {
+      await Promise.all(sampleCards.map((card) => putCard(structuredClone(card), storageScope)));
+      cards = await getCards(storageScope);
+    }
     renderCards();
   } catch (error) {
     const container = document.querySelector('#cards');
@@ -218,7 +369,7 @@ function renderCards(): void {
   if (!container) return;
   container.setAttribute('aria-busy', 'false');
   if (!cards.length) {
-    container.innerHTML = `<div class="empty-state"><span class="empty-mark" aria-hidden="true">01</span><div><h3>No tempo has made the ledger yet.</h3><p>Find a tempo above, then record the passage and your next honest step.</p><button type="button" class="text-button" data-action="new">Record the current ${bpm} BPM trial →</button></div></div>`;
+    container.innerHTML = `<div class="empty-state"><span class="empty-mark" aria-hidden="true">01</span><div><h3>No practice cards yet</h3><p>Choose a tempo above, then record the passage and your next step.</p><button type="button" class="text-button" data-action="new">Record the current ${bpm} BPM trial →</button></div></div>`;
     return;
   }
   container.innerHTML = cards.map((card, index) => cardMarkup(card, index)).join('');
@@ -268,16 +419,37 @@ function bindHomeEvents(): void {
   document.querySelector('#close-dialog')?.addEventListener('click', closeCardDialog);
   document.querySelector('#cancel-dialog')?.addEventListener('click', closeCardDialog);
   document.querySelector('#card-dialog')?.addEventListener('close', () => returningFocus?.focus());
+  document.querySelector('#card-dialog')?.addEventListener('keydown', trapDialogFocus);
   document.querySelector('#export-json')?.addEventListener('click', exportJson);
   document.querySelector('#export-csv')?.addEventListener('click', exportCsv);
   document.querySelector('#import-file')?.addEventListener('change', importJson);
   document.querySelector('#license-form')?.addEventListener('submit', restoreLicense);
+  document.querySelector('#reset-demo')?.addEventListener('click', () => void resetDemo());
+  document.querySelector('#start-real')?.addEventListener('click', () => void startForReal());
   window.addEventListener('keydown', keyboardShortcuts);
+}
+
+function trapDialogFocus(event: Event): void {
+  const keyEvent = event as KeyboardEvent;
+  if (keyEvent.key !== 'Tab') return;
+  const dialog = keyEvent.currentTarget as HTMLDialogElement;
+  const focusable = [...dialog.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')]
+    .filter((element) => element.getClientRects().length > 0);
+  const first = focusable[0];
+  const last = focusable.at(-1);
+  if (!first || !last) return;
+  if (keyEvent.shiftKey && document.activeElement === first) {
+    keyEvent.preventDefault();
+    last.focus();
+  } else if (!keyEvent.shiftKey && document.activeElement === last) {
+    keyEvent.preventDefault();
+    first.focus();
+  }
 }
 
 function setBpm(value: number, announcement?: string): void {
   bpm = clampBpm(value);
-  localStorage.setItem('tempo:bpm', String(bpm));
+  localStorage.setItem(settingKey('bpm'), String(bpm));
   const range = document.querySelector<HTMLInputElement>('#bpm-range');
   const number = document.querySelector<HTMLInputElement>('#bpm-number');
   const output = document.querySelector<HTMLOutputElement>('#bpm-output strong');
@@ -291,7 +463,9 @@ function setBpm(value: number, announcement?: string): void {
 
 function setMeter(value: number): void {
   meter = value;
-  localStorage.setItem('tempo:meter', String(meter));
+  localStorage.setItem(settingKey('meter'), String(meter));
+  const select = document.querySelector<HTMLSelectElement>('#meter');
+  if (select) select.value = String(meter);
   const strip = document.querySelector('#beat-strip');
   if (strip) strip.innerHTML = beatCells();
   updateTempoName();
@@ -300,7 +474,9 @@ function setMeter(value: number): void {
 
 function setVolume(value: number): void {
   volume = Math.min(0.16, Math.max(0.02, value));
-  localStorage.setItem('tempo:volume', String(volume));
+  localStorage.setItem(settingKey('volume'), String(volume));
+  const input = document.querySelector<HTMLInputElement>('#volume');
+  if (input) input.value = String(Math.round(volume * 100));
   const label = document.querySelector('#volume-value');
   if (label) label.textContent = `${Math.round(volume / 0.16 * 100)}%`;
   metronome.update(bpm, meter, volume);
@@ -365,7 +541,7 @@ function setStatus(message: string): void {
 
 function openCardDialog(card?: PracticeCard): void {
   if (!card && !licensed && cards.length >= freeCardLimit) {
-    showToast(`The free ledger holds ${freeCardLimit} cards. Export remains available, or unlock unlimited cards below.`, 'View Notebook edition', () => document.querySelector('#edition')?.scrollIntoView());
+    showToast(`The free edition holds ${freeCardLimit} cards. Export remains available, or buy unlimited cards below.`, 'View Notebook edition', () => document.querySelector('#edition')?.scrollIntoView());
     return;
   }
   returningFocus = document.activeElement as HTMLElement;
@@ -400,7 +576,7 @@ async function handleCardSubmit(event: Event): Promise<void> {
     return;
   }
   if (!licensed && ![2, 4, 6, 8].includes(nextStep)) {
-    errorElement.textContent = 'Choose a free step of 2, 4, 6, or 8 BPM—or unlock custom steps.';
+    errorElement.textContent = 'Choose a free step of 2, 4, 6, or 8 BPM, or buy custom steps.';
     return;
   }
   const existing = cards.find((card) => card.id === id);
@@ -421,12 +597,12 @@ async function handleCardSubmit(event: Event): Promise<void> {
     updatedAt: new Date().toISOString()
   } : createCard(values);
   try {
-    await putCard(card);
+    await putCard(card, storageScope);
     cards = [card, ...cards.filter((item) => item.id !== card.id)];
     renderCards();
     closeCardDialog();
-    announceCards(existing ? `${card.name} updated.` : `${card.name} added to the practice ledger.`);
-    document.querySelector('#notebook')?.scrollIntoView({ behavior: 'smooth' });
+    announceCards(existing ? `${card.name} updated.` : `${card.name} added to your practice cards.`);
+    document.querySelector('#notebook')?.scrollIntoView({ behavior: preferredScrollBehavior() });
   } catch (error) {
     errorElement.textContent = error instanceof Error ? error.message : 'The card could not be saved.';
   }
@@ -448,12 +624,12 @@ async function handleCardAction(event: Event): Promise<void> {
     const select = document.querySelector<HTMLSelectElement>('#meter');
     if (select) select.value = String(card.meter);
     setMeter(card.meter);
-    document.querySelector('#earcheck')?.scrollIntoView({ behavior: 'smooth' });
+    document.querySelector('#earcheck')?.scrollIntoView({ behavior: preferredScrollBehavior() });
     return;
   }
   if (button.dataset.action === 'delete') {
     if (!confirm(`Delete “${card.name}” and its ${card.history.length} recorded attempt${card.history.length === 1 ? '' : 's'}?`)) return;
-    await deleteCard(card.id);
+    await deleteCard(card.id, storageScope);
     deletedCard = card;
     cards = cards.filter((item) => item.id !== card.id);
     renderCards();
@@ -463,7 +639,7 @@ async function handleCardAction(event: Event): Promise<void> {
   const outcome = button.dataset.action === 'pass' ? 'passed' : 'needs-work';
   const updated = recordAttempt(card, bpm, outcome);
   try {
-    await putCard(updated);
+    await putCard(updated, storageScope);
     cards = [updated, ...cards.filter((item) => item.id !== updated.id)];
     renderCards();
     announceCards(outcome === 'passed' ? `${card.name}: ${bpm} BPM passed. Try ${updated.nextBpm} next.` : `${card.name}: ${bpm} BPM recorded as needs work. Try it again next.`);
@@ -474,7 +650,7 @@ async function handleCardAction(event: Event): Promise<void> {
 
 async function undoDelete(): Promise<void> {
   if (!deletedCard) return;
-  await putCard(deletedCard);
+  await putCard(deletedCard, storageScope);
   cards = [deletedCard, ...cards];
   deletedCard = null;
   renderCards();
@@ -484,6 +660,45 @@ async function undoDelete(): Promise<void> {
 function announceCards(message: string): void {
   const status = document.querySelector('#cards-status');
   if (status) status.textContent = message;
+}
+
+function preferredScrollBehavior(): ScrollBehavior {
+  return matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+}
+
+async function resetDemo(): Promise<void> {
+  if (!demoMode) return;
+  metronome.stop();
+  await clearCards('demo');
+  await Promise.all(sampleCards.map((card) => putCard(structuredClone(card), 'demo')));
+  for (const key of ['bpm', 'meter', 'volume']) localStorage.removeItem(`demo:tempo:${key}`);
+  localStorage.removeItem('demo:sb_license:tempo-earcheck');
+  localStorage.removeItem('demo:sb_license_verdict:tempo-earcheck');
+  licensed = false;
+  bpm = 96;
+  meter = 4;
+  volume = 0.08;
+  cards = await getCards('demo');
+  renderCards();
+  setBpm(bpm);
+  setMeter(meter);
+  setVolume(volume);
+  renderLicense();
+  announceCards('Sample notebook reset to three practice cards.');
+}
+
+async function startForReal(): Promise<void> {
+  if (!demoMode) return;
+  metronome.stop();
+  try {
+    await deleteStorage('demo');
+  } catch {
+    await clearCards('demo');
+  }
+  for (const key of ['bpm', 'meter', 'volume']) localStorage.removeItem(`demo:tempo:${key}`);
+  localStorage.removeItem('demo:sb_license:tempo-earcheck');
+  localStorage.removeItem('demo:sb_license_verdict:tempo-earcheck');
+  location.assign('/#earcheck');
 }
 
 function keyboardShortcuts(event: KeyboardEvent): void {
@@ -525,11 +740,11 @@ async function importJson(event: Event): Promise<void> {
   try {
     const imported = validateImport(JSON.parse(await file.text()));
     if (!confirm(`Merge ${imported.length} practice card${imported.length === 1 ? '' : 's'} into this notebook? Newer edits win.`)) return;
-    await mergeCards(imported);
+    await mergeCards(imported, storageScope);
     await loadCards();
     showToast(`${imported.length} practice card${imported.length === 1 ? '' : 's'} imported.`);
   } catch (error) {
-    showToast(error instanceof Error ? error.message : 'That backup could not be imported.');
+    showToast(error instanceof SyntaxError ? 'That file is not valid JSON. Choose a Tempo Earcheck backup.' : error instanceof Error ? error.message : 'That backup could not be imported.');
   } finally {
     input.value = '';
   }
@@ -563,7 +778,7 @@ async function verifyLicense(token: string): Promise<void> {
     renderLicense();
     renderCards();
   } catch {
-    licenseNotice = licensed ? 'Offline: using the last valid license check.' : 'Could not verify while offline. The free desk is still ready.';
+    licenseNotice = licensed ? 'Offline: using the last valid license check.' : 'Could not verify while offline. The free tempo tool is still ready.';
     renderLicense();
   }
 }
@@ -592,7 +807,7 @@ function restoreLicense(event: Event): void {
 
 function updateNetwork(): void {
   const state = document.querySelector('#network-state');
-  if (state) state.textContent = navigator.onLine ? 'Ready offline' : 'Offline · all local';
+  if (state) state.textContent = navigator.onLine ? 'Online' : 'Offline';
 }
 
 function showToast(message: string, actionLabel?: string, action?: () => void): void {
@@ -630,6 +845,7 @@ async function registerServiceWorker(): Promise<void> {
 
 if (location.pathname === '/privacy' || location.pathname === '/privacy/') legalPage('privacy');
 else if (location.pathname === '/terms' || location.pathname === '/terms/') legalPage('terms');
-else homePage();
+else if (location.pathname === '/' || /^\/demo\/?$/.test(location.pathname)) homePage();
+else notFoundPage();
 
 void registerServiceWorker();

@@ -25,6 +25,17 @@ describe('practice cards', () => {
     vi.unstubAllGlobals();
   });
 
+  it('keeps a passed result and next step inside the top BPM boundary', () => {
+    vi.stubGlobal('crypto', { randomUUID: () => 'test-id' });
+    const card = createCard({ name: 'Fast scale', bpm: 240, meter: 4, step: 8, note: '' });
+    const passed = recordAttempt(card, 240, 'passed');
+    expect(passed.passedBpm).toBe(240);
+    expect(passed.nextBpm).toBe(240);
+    const retry = recordAttempt(passed, 240, 'needs-work');
+    expect(retry.nextBpm).toBe(240);
+    vi.unstubAllGlobals();
+  });
+
   it('round-trips a valid export and escapes CSV cells', () => {
     vi.stubGlobal('crypto', { randomUUID: () => 'test-id' });
     const card = createCard({ name: 'Tune, A', bpm: 90, meter: 3, step: 3, note: 'steady' });

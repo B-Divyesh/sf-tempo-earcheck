@@ -2,9 +2,11 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 type StaticConfig = {
+  navigationFallback?: unknown;
   globalHeaders: Record<string, string>;
   mimeTypes: Record<string, string>;
   routes: Array<{ route: string; headers: Record<string, string> }>;
+  responseOverrides: Record<string, { rewrite: string }>;
 };
 
 const config = JSON.parse(readFileSync(new URL('../public/staticwebapp.config.json', import.meta.url), 'utf8')) as StaticConfig;
@@ -26,5 +28,11 @@ describe('production response policy', () => {
     expect(route('/sw.js')?.['Cache-Control']).toContain('no-cache');
     expect(config.mimeTypes['.webmanifest']).toBe('application/manifest+json');
     expect(route('/*')?.['Cache-Control']).toContain('must-revalidate');
+  });
+
+  it('serves the designed missing page for an HTTP 404 response', () => {
+    expect(config.navigationFallback).toBeUndefined();
+    expect(config.responseOverrides['404']).toEqual({ rewrite: '/404.html' });
+    expect(readFileSync(new URL('../404.html', import.meta.url), 'utf8')).toContain('Page not found — Tempo Earcheck');
   });
 });
